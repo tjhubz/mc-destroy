@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y zip unzip jq
+
+    - name: Validate datapacks
+      run: |
+        echo "Validating datapack structure..."
+        ./scripts/build.sh --validate-only
+
+    - name: Build release package
+      run: |
+        echo "Building release package..."
+        ./scripts/build.sh
+
+    - name: Generate version
+      id: version
+      run: |
+        # Extract version from commit messages or use timestamp
+        if git log -1 --pretty=%B | grep -q "BREAKING:"; then
+          echo "type=major" >> $GITHUB_OUTPUT
+        elif git log -1 --pretty=%B | grep -q "feat:"; then
+          echo "type=minor" >> $GITHUB_OUTPUT
+        else
+          echo "type=patch" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create release
+      if: success()
+      run: |
+        gh release create "v${{ github.run_number }}" \
+          --title "MC-Destroy v${{ github.run_number }}" \
+          --notes "## What's Changed
+        ${{ github.event.head_commit.message }}
+        
+        ### Installation
+        1. Download the \`mc-destroy-v${{ github.run_number }}.zip\` file below
+        2. Extract to your Minecraft saves folder
+        3. Launch the world - everything is pre-configured!
+        
+        **Full Changelog**: https://github.com/${{ github.repository }}/commits/main" \
+          ./build/mc-destroy-v${{ github.run_number }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

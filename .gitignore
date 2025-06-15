@@ -1,12 +1,44 @@
-# Ignore everything
-*
+# Build artifacts and temporary files
+build/
+temp_world/
+*.zip
+*.sha256
 
-# But not the datapacks folder
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Development world (created by setup script)
+mc-destroy-dev/
+
+# Minecraft specific
+*.log
+crash-reports/
+
+# Keep these files and directories
 !datapacks/
-
-# And not the contents of the datapacks folder
 !datapacks/**
-
-# Also track these specific files
+!world-template/
+!world-template/**
+!scripts/
+!scripts/**
+!.github/
+!.github/**
+!README.md
+!CONTRIBUTING.md
+!LICENSE
 !.gitignore
-!spyglass.json
+!.gitattributes
+!icon.png
