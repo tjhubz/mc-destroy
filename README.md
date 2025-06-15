@@ -1,166 +1,189 @@
-# 🎮 MC-Destroy
+# 💥 TNT Wars - MC-Destroy
 
-An elegant Minecraft minigame with automated build and release system for seamless development and distribution.
+**The ultimate team-based TNT combat minigame for Minecraft!**
 
-## 🚀 Quick Start
-
-### For Players
-
-1. **Download the latest release**
-   - Go to the [Releases page](../../releases)
-   - Download the latest `mc-destroy-vX.X.X.zip` file
-
-2. **Install**
-   - Extract the zip file to your Minecraft saves folder:
-     - **Windows**: `%appdata%\.minecraft\saves\`
-     - **macOS**: `~/Library/Application Support/minecraft/saves/`
-     - **Linux**: `~/.minecraft/saves/`
-
-3. **Play**
-   - Launch Minecraft
-   - Select the "MC-Destroy" world
-   - Everything is pre-configured and ready to go!
-
-### For Developers
-
-Get started in 3 simple commands:
-
-```bash
-git clone https://github.com/username/mc-destroy.git
-cd mc-destroy
-./scripts/setup-dev.sh
-```
-
-That's it! The setup script will:
-- ✅ Create a development world with all datapacks installed
-- ✅ Configure git hooks for quality assurance
-- ✅ Set up helper scripts for development
-
-## ⚡ Features
-
-- **🎯 One-Click Download**: Latest minigame always available as a single zip file
-- **🤖 Automated Releases**: Auto-build and release on PR merge
-- **👨‍💻 Developer-Friendly**: 3-step setup for contributors
-- **🔄 Hot Reload**: Quick datapack testing without world restart
-- **✅ Quality Assurance**: Automated validation and testing
-- **📦 Clean Packaging**: Professional build process with checksums
-
-## 🛠 Development
-
-### Quick Commands
-
-```bash
-# Set up development environment
-./scripts/setup-dev.sh
-
-# Validate datapacks
-./scripts/build.sh --validate-only
-
-# Reload datapacks in dev world
-./scripts/reload-datapacks.sh
-
-# Test full build process
-./scripts/build.sh
-```
-
-### Development Workflow
-
-1. **Make Changes**: Edit datapacks in the `datapacks/` directory
-2. **Test Locally**: Use `./scripts/reload-datapacks.sh` to update your dev world
-3. **Validate**: Run `./scripts/build.sh --validate-only` to check for errors
-4. **Build Test**: Run `./scripts/build.sh` to test the full build process
-5. **Submit**: Create a PR - automatic release on merge!
-
-### Project Structure
-
-```
-mc-destroy/
-├── datapacks/                    # 📦 Source datapacks (edit these!)
-├── world-template/               # 🌍 Base world template
-├── scripts/
-│   ├── build.sh                 # 🔨 Build automation
-│   ├── setup-dev.sh             # 🚀 Developer setup  
-│   └── reload-datapacks.sh      # ⚡ Hot reload helper
-├── .github/workflows/
-│   └── release.yml              # 🤖 Auto-release pipeline
-└── README.md                    # 📖 You are here!
-```
-
-### Datapack Development
-
-The `datapacks/` directory contains all the minigame logic:
-
-- **server/**: Core server-side functionality
-- **command_helper/**: Command utilities and helpers  
-- **effect_overflow.zip**: Effect management system
-- **lock_fixer.zip**: Block state management
-- **attribute_reset.zip**: Player attribute handling
-- **unwaterloggable_leaves.zip**: Environmental mechanics
-
-Each datapack can be either:
-- 📁 **Directory**: For active development (easy to edit)
-- 🗜️ **ZIP file**: For stable/external datapacks
-
-## 🎯 Release Process
-
-The repository uses automated releases:
-
-1. **Development**: Make changes to datapacks
-2. **Testing**: Use development tools to validate changes
-3. **PR Submission**: Open a pull request
-4. **Automatic Release**: On PR merge:
-   - ✅ Validates all datapacks
-   - 🔨 Builds complete minigame package
-   - 📦 Creates GitHub release with downloadable zip
-   - 🏷️ Auto-generates version tags and changelogs
-
-### Versioning
-
-Versions are automatically generated based on commit messages:
-- `feat: new feature` → Minor version bump (1.0.0 → 1.1.0)
-- `fix: bug fix` → Patch version bump (1.0.0 → 1.0.1)  
-- `BREAKING: major change` → Major version bump (1.0.0 → 2.0.0)
-
-## 🤝 Contributing
-
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
-
-### Quick Contribution Steps
-
-1. Fork the repository
-2. Run `./scripts/setup-dev.sh` to set up your environment
-3. Make your changes to the datapacks
-4. Test thoroughly using the development world
-5. Submit a pull request
-
-## 📋 Requirements
-
-### For Players
-- Minecraft Java Edition
-- Compatible version: [specify version]
-
-### For Developers  
-- Git
-- Bash shell (Linux/macOS/WSL)
-- Minecraft Java Edition (for testing)
-
-## 🐛 Issues & Support
-
-- 🐛 **Bug Reports**: [Open an issue](../../issues/new?template=bug_report.md)
-- 💡 **Feature Requests**: [Request a feature](../../issues/new?template=feature_request.md)
-- 💬 **Questions**: [Start a discussion](../../discussions)
-
-## 📄 License
-
-This project is licensed under the [LICENSE](LICENSE) - see the file for details.
-
-## 🙏 Acknowledgments
-
-- Thanks to all contributors who help make this project better
-- Built with ❤️ for the Minecraft community
+Battle across floating islands in explosive 4-team warfare where strategy, teamwork, and precise TNT placement determine victory. Protect your sheep, destroy your enemies, and claim dominance in the arena!
 
 ---
 
-**Ready to play?** [Download the latest release](../../releases/latest) and jump in!
+## 🎯 Game Overview
 
-**Want to contribute?** Run `./scripts/setup-dev.sh` and start building!
+TNT Wars is an intense multiplayer minigame where **4 teams** battle across **floating island arenas** using **TNT combat** and **strategic building**. Each team must protect their **sheep** (your team's lifeline) while attempting to eliminate enemy teams through explosive warfare.
+
+### 🏆 Victory Conditions
+- **Eliminate all enemy sheep** to knock out opposing teams
+- **Last team standing** wins the match
+- **Survive until time limit** for potential tiebreaker scenarios
+
+---
+
+## 🎮 How to Play
+
+### Quick Start
+1. **Download** the latest release from the [Releases page](../../releases)
+2. **Extract** to your Minecraft saves folder
+3. **Launch** the "MC-Destroy" world in Minecraft
+4. **Join a team** and start battling!
+
+### Basic Gameplay Loop
+1. **🏃 Join a Team**: Choose Red, Blue, Yellow, or White team
+2. **🏗️ Build Phase**: Fortify your island and prepare defenses (time varies by settings)
+3. **💥 Combat Phase**: Use TNT to attack enemy islands and players
+4. **🐑 Protect Your Sheep**: Keep your team's sheep alive at all costs
+5. **🏆 Eliminate Enemies**: Destroy enemy sheep to eliminate opposing teams
+
+---
+
+## 🏝️ Game Features
+
+### 🎨 Multiple Arenas
+- **5 Unique Maps**: Each with different layouts and strategic possibilities
+- **Floating Islands**: Teams spawn on separate islands with bridges/crossing opportunities
+- **Dynamic Borders**: World borders that can shift during gameplay
+
+### ⚔️ Combat Mechanics
+- **TNT Warfare**: Primary weapon system with team-tagged explosives
+- **Infinite Water Buckets**: Defend against TNT with unlimited water
+- **Anti-Team Grief**: Protection against teammates damaging your own island
+- **Strategic Building**: Use the build phase to create defenses and launch platforms
+
+### � Sheep Protection System
+- **Team Sheep**: Each team has sheep that must be protected
+- **Health Customization**: Configurable sheep health levels
+- **Glow Effects**: Optional sheep highlighting for visibility
+- **Elimination**: Losing your sheep eliminates your team
+
+### ⚙️ Game Modes & Settings
+
+#### Build Phase Options
+- **Build Period Duration**: Customizable preparation time before combat
+- **Crossing Rules**: Control when players can leave their spawn islands
+- **No-TNT Period**: Safe building time without explosive interference
+
+#### Combat Settings
+- **Respawn System**: Multiple respawn modes (instant, timed, elimination)
+- **Fall Damage**: Toggleable fall damage protection
+- **Team Grief Protection**: Prevent friendly fire on team structures
+- **Alert System**: Warnings when enemies invade your island
+
+#### Advanced Features
+- **Deathmatch Modes**: Special endgame scenarios with unique mechanics
+- **Bridge Systems**: Automated or manual bridge deployment
+- **Spectral Arrow TNT**: Advanced projectile-based TNT deployment
+- **Chicken Bomb Mode**: Alternative explosive delivery system
+
+---
+
+## 🎪 Game Modes
+
+### 🏰 Classic Mode
+- Standard 4-team warfare
+- Build period followed by combat
+- Sheep protection objective
+- Last team standing wins
+
+### ⚡ Elimination Mode
+- No respawning - players eliminated permanently when killed
+- Faster-paced, high-stakes combat
+- Team elimination through player or sheep death
+
+### � Deathmatch Mode
+- Special endgame conditions
+- Enhanced explosive mechanics
+- Spectral arrow or chicken bomb systems
+- Intense final showdowns
+
+### 🏃 Practice Mode
+- Solo or small group training
+- Map exploration and mechanics testing
+- No team requirements
+- Perfect for learning strategies
+
+---
+
+## 🎛️ Customization Options
+
+### Match Settings
+- **Match Duration**: Set time limits for games
+- **Team Size**: Flexible player counts per team
+- **Respawn Timer**: Control respawn delays
+- **Build Phase Length**: Adjust preparation time
+
+### Gameplay Tweaks
+- **Sheep Health**: Configure objective durability
+- **Water Mechanics**: Infinite water bucket settings
+- **TNT Behavior**: Explosion customization
+- **Border Settings**: Dynamic world border controls
+
+### Visual & Audio
+- **Team Colors**: Enhanced team identification
+- **Alert Systems**: Enemy intrusion warnings
+- **Scoreboard Display**: Real-time match statistics
+- **Boss Bar Timers**: Visual countdown displays
+
+---
+
+## � Pro Tips & Strategies
+
+### 🛡️ Defensive Strategies
+- **Water Walls**: Create water barriers to neutralize incoming TNT
+- **Underground Bunkers**: Protect sheep with hidden shelters
+- **Observation Posts**: Build lookouts to spot enemy attacks early
+- **Redundant Defenses**: Multiple layers of protection
+
+### ⚔️ Offensive Tactics
+- **TNT Cannons**: Build launchers for long-range attacks
+- **Bridge Rushes**: Quick invasions during build phase transitions
+- **Distraction Attacks**: Split enemy attention across multiple fronts
+- **Timing Coordination**: Synchronized team assaults
+
+### 🧠 Team Coordination
+- **Role Assignment**: Designate builders, attackers, and defenders
+- **Communication**: Coordinate attacks and defense callouts
+- **Resource Management**: Share materials and tactical positions
+- **Backup Plans**: Always have sheep evacuation routes ready
+
+---
+
+## 🎲 Getting Started Tips
+
+### For New Players
+1. **Start with Practice Mode** to learn maps and mechanics
+2. **Watch experienced players** to learn advanced techniques
+3. **Focus on defense first** - protecting your sheep is crucial
+4. **Experiment with TNT placement** in safe environments
+
+### For Server Operators
+- The minigame supports **multiplayer servers** with configurable team sizes
+- **Admin commands** available for match management
+- **Spectator mode** for observers and eliminated players
+- **Hot-reload support** for configuration changes
+
+---
+
+## 📋 Requirements
+
+- **Minecraft Java Edition** (compatible version specified in pack.mcmeta)
+- **Multiplayer support** for full team-based experience
+- **Recommended**: 4-16 players for optimal gameplay
+
+---
+
+## 🤝 Community & Support
+
+- 🐛 **Bug Reports**: [Report Issues](../../issues/new?template=bug_report.md)
+- 💡 **Feature Ideas**: [Suggest Features](../../issues/new?template=feature_request.md)
+- 💬 **Discussions**: [Community Chat](../../discussions)
+- 🎮 **Latest Version**: [Download Here](../../releases/latest)
+
+---
+
+## 🎊 Ready to Battle?
+
+**[⬇️ Download TNT Wars Now](../../releases/latest)**
+
+*Jump into explosive team-based combat where strategy meets mayhem!*
+
+---
+
+*Built with ❤️ for the Minecraft PvP community*
