@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# MC-Destroy Developer Setup Script
+# Destroy Developer Setup Script
 # Sets up development environment for contributors
 
 set -e
 
 # Configuration
-DEV_WORLD_NAME="mc-destroy-dev"
+DEV_WORLD_NAME="Destroy-dev"
 MINECRAFT_SAVES_DIR="$HOME/.minecraft/saves"
 WORLD_TEMPLATE="world-template"
 DATAPACKS_DIR="datapacks"
@@ -158,7 +158,7 @@ create_dev_scripts() {
 #!/bin/bash
 # Quick script to reload datapacks in development world
 
-DEV_WORLD_NAME="mc-destroy-dev"
+DEV_WORLD_NAME="Destroy-dev"
 MINECRAFT_SAVES_DIR="$HOME/.minecraft/saves"
 DATAPACKS_DIR="datapacks"
 
@@ -219,7 +219,7 @@ show_next_steps() {
 
 # Main execution
 main() {
-    echo -e "${GREEN}MC-Destroy Development Environment Setup${NC}"
+    echo -e "${GREEN}Destroy Development Environment Setup${NC}"
     echo "========================================"
     echo ""
 

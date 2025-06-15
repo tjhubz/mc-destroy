@@ -1,6 +1,6 @@
-# 🤝 Contributing to MC-Destroy
+# 🤝 Contributing to Destroy
 
-Thank you for your interest in contributing to MC-Destroy! This guide will help you get started and ensure a smooth contribution process.
+Thank you for your interest in contributing to Destroy! This guide will help you get started and ensure a smooth contribution process.
 
 ## 🚀 Quick Start for Contributors
 

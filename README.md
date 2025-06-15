@@ -22,7 +22,7 @@ TNT Wars is an intense multiplayer minigame where **4 teams** battle across **fl
 ### Quick Start
 1. **Download** the latest release from the [Releases page](../../releases)
 2. **Extract** to your Minecraft saves folder
-3. **Launch** the "MC-Destroy" world in Minecraft
+3. **Launch** the "Destroy" world in Minecraft
 4. **Join a team** and start battling!
 
 ### Basic Gameplay Loop

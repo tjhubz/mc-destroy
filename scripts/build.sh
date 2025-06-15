@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MC-Destroy Build Script
+# Destroy Build Script
 # Builds the complete minigame package by integrating datapacks into world template
 
 set -e
@@ -93,7 +93,7 @@ EOF
 
 # Main build function
 build_package() {
-    log_info "Starting build process for MC-Destroy v$VERSION"
+    log_info "Starting build process for Destroy v$VERSION"
 
     # Clean previous builds
     if [ -d "$BUILD_DIR" ]; then
@@ -127,7 +127,7 @@ build_package() {
     done < <(find "$DATAPACKS_DIR" -maxdepth 1 -mindepth 1 -print0)
 
     # Create the final package
-    local package_name="mc-destroy-v$VERSION.zip"
+    local package_name="Destroy-v$VERSION.zip"
     log_info "Creating package: $package_name"
     
     cd "$TEMP_DIR"

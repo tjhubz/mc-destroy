@@ -57,16 +57,16 @@ jobs:
       if: success()
       run: |
         gh release create "v${{ github.run_number }}" \
-          --title "MC-Destroy v${{ github.run_number }}" \
+          --title "Destroy v${{ github.run_number }}" \
           --notes "## What's Changed
         ${{ github.event.head_commit.message }}
         
         ### Installation
-        1. Download the \`mc-destroy-v${{ github.run_number }}.zip\` file below
+        1. Download the \`Destroy-v${{ github.run_number }}.zip\` file below
         2. Extract to your Minecraft saves folder
         3. Launch the world - everything is pre-configured!
         
         **Full Changelog**: https://github.com/${{ github.repository }}/commits/main" \
-          ./build/mc-destroy-v${{ github.run_number }}.zip
+          ./build/Destroy-v${{ github.run_number }}.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
