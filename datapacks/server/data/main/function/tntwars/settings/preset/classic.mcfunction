@@ -12,18 +12,18 @@ scoreboard players set *fall_damage settings 0
 scoreboard players set *respawn_time settings 1
 scoreboard players set *alert settings 0
 
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~-1 ~-2 run function main:tntwars/settings/crossing
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~-1 ~-4 run function main:tntwars/settings/launching
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~-1 ~-3 run function main:tntwars/settings/bridges
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~ ~-5 run function main:tntwars/settings/sheep_health
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~-2 ~-2 run function main:tntwars/settings/respawning
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~ ~-4 run function main:tntwars/settings/deathmatch
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~ ~-3 run function main:tntwars/settings/build_period
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~ ~-2 run function main:tntwars/settings/match_limit
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~-2 ~-4 run function main:tntwars/settings/sheep_glow
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~-2 ~-5 run function main:tntwars/settings/fall_damage
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~-2 ~-3 run function main:tntwars/settings/respawn_time
-execute at @e[type=minecraft:area_effect_cloud,tag=preset] positioned ~ ~-1 ~-5 run function main:tntwars/settings/alert
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-1 ~-2 run function main:tntwars/settings/crossing
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-1 ~-4 run function main:tntwars/settings/launching
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-1 ~-3 run function main:tntwars/settings/bridges
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~ ~-5 run function main:tntwars/settings/sheep_health
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-2 ~-2 run function main:tntwars/settings/respawning
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~ ~-4 run function main:tntwars/settings/deathmatch
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~ ~-3 run function main:tntwars/settings/build_period
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~ ~-2 run function main:tntwars/settings/match_limit
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-2 ~-4 run function main:tntwars/settings/sheep_glow
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-2 ~-5 run function main:tntwars/settings/fall_damage
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-2 ~-3 run function main:tntwars/settings/respawn_time
+execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-1 ~-5 run function main:tntwars/settings/alert
 
 tag @s remove set
 

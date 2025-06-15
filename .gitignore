@@ -42,3 +42,5 @@ crash-reports/
 !.gitignore
 !.gitattributes
 !icon.png
+datapacks/.DS_Store
+datapacks/server/.DS_Store
