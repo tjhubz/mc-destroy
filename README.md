@@ -1,4 +1,4 @@
-# 💥 TNT Wars - MC-Destroy
+# 💥 TNT Wars - DESTROY
 
 **The ultimate team-based TNT combat minigame for Minecraft!**
 
