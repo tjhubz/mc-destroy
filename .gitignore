@@ -1,0 +1,12 @@
+# Ignore everything
+*
+
+# But not the datapacks folder
+!datapacks/
+
+# And not the contents of the datapacks folder
+!datapacks/**
+
+# Also track these specific files
+!.gitignore
+!spyglass.json
