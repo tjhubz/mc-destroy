@@ -31,12 +31,12 @@ git checkout -b feature/your-feature-name
 
 # When ready, save your changes back to the repository
 # (From your development environment's .dev-scripts/ folder)
-./sync-to-repo.sh  # Sync datapacks only
+./save-to-repo.sh  # Save datapacks only
 # OR
-./sync-to-repo.sh --world  # Sync datapacks + world template
+./save-to-repo.sh --world  # Save datapacks + world template
 
-# Validate your changes
-./validate-build.sh
+# Get latest changes from repository if needed
+./sync-from-repo.sh
 
 # Commit your changes (back in repository folder)
 git add .
@@ -59,16 +59,12 @@ After running `setup-dev.sh`, you get a complete development environment in your
 **🔄 Available Commands (from your development environment):**
 ```bash
 # Save your changes to repository
-./sync-to-repo.sh              # Save datapacks only (most common)
-./sync-to-repo.sh --world      # Save datapacks + world template
+./save-to-repo.sh                    # Save datapacks only (most common)
+./save-to-repo.sh --world            # Save datapacks + world template
 
 # Get latest changes from repository
-./sync-from-repo.sh            # Get datapacks only
-./sync-from-repo.sh --all      # Get everything
-
-# Validate and build
-./validate-build.sh            # Validate your changes
-./validate-build.sh --full-build  # Full build test
+./sync-from-repo.sh                  # Get latest datapacks
+./sync-from-repo.sh --all            # Reset everything from repository
 ```
 
 ## 🎯 Types of Contributions
@@ -305,31 +301,27 @@ Any additional information that reviewers should know.
 
 | Script | Purpose |
 |--------|---------|
-| `./sync-to-repo.sh` | Save changes from saves to repository |
-| `./sync-from-repo.sh` | Get latest changes from repository to saves |
-| `./validate-build.sh` | Validate and optionally build your changes |
+| `./save-to-repo.sh` | Save changes from development environment to repository |
+| `./sync-from-repo.sh` | Get latest changes from repository |
 
 ### Helpful Commands
 
 **From your development environment (`.dev-scripts/` folder):**
 ```bash
-# Most common workflow commands
-./sync-to-repo.sh                       # Save your work to repo
-./sync-from-repo.sh                     # Get latest from repo
-./validate-build.sh                     # Check datapack validity
+# Essential development workflow commands
+./save-to-repo.sh                       # Save your work to repository
+./sync-from-repo.sh                     # Get latest changes from repository
 
-# Full reset workflow
-./sync-from-repo.sh --all               # Complete reset from repo
-
-# Full build test
-./validate-build.sh --full-build        # Test full build process
+# Full workflow options
+./save-to-repo.sh --world               # Save datapacks + world template
+./sync-from-repo.sh --all               # Complete reset from repository
 ```
 
 **From repository folder (legacy commands still work):**
 ```bash
 ./scripts/sync-from-saves.sh            # Save work to repo
 ./scripts/sync-to-saves.sh --all        # Reset from repo
-./scripts/build.sh --validate-only      # Check validity
+./scripts/build.sh --validate-only      # Check validity (if needed)
 git status                              # Check git status
 ```
 

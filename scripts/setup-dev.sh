@@ -160,24 +160,15 @@ create_dev_scripts() {
     # Create scripts directory in the development world
     mkdir -p "$scripts_dir"
     
-    # Copy sync scripts to the development world (exclude setup and build scripts)
-    for script in scripts/*; do
-        script_name=$(basename "$script")
-        if [[ "$script_name" != "setup-dev.sh" && "$script_name" != "build.sh" ]]; then
-            cp -r "$script" "$scripts_dir/"
-        fi
-    done
-    
-    # Create a sync script that knows the repo location
-    cat > "$scripts_dir/sync-to-repo.sh" << EOF
+    # Create the only two scripts developers actually need
+    # Script 1: Save work to repository
+    cat > "$scripts_dir/save-to-repo.sh" << EOF
 #!/bin/bash
-# Sync changes from saves back to repository
-# This script is auto-generated and knows the repo location
+# Save your development work back to the repository
+# This syncs datapacks from your development world to the git repository
 
 set -e
-
 REPO_PATH="$(pwd)"
-SAVES_PATH="$dev_world_path"
 
 # Colors for output
 RED='\033[0;31m'
@@ -189,31 +180,41 @@ NC='\033[0m' # No Color
 log_info() { echo -e "\${BLUE}[INFO]\${NC} \$1"; }
 log_success() { echo -e "\${GREEN}[SUCCESS]\${NC} \$1"; }
 log_warning() { echo -e "\${YELLOW}[WARNING]\${NC} \$1"; }
-log_error() { echo -e "\${RED}[ERROR]\${NC} \$1"; }
 
-echo -e "\${GREEN}Sync from Saves to Repository\${NC}"
-echo "=============================="
+echo -e "\${GREEN}💾 Saving Your Work to Repository\${NC}"
+echo "=================================="
 echo ""
 
 # Change to repo directory and run sync-from-saves
 cd "\$REPO_PATH"
-./scripts/sync-from-saves.sh "\$@"
 
-log_success "Sync complete! Changes saved to repository."
+# Determine what to sync based on arguments
+if [[ "\$1" == "--world" ]]; then
+    log_info "Saving datapacks + world template to repository..."
+    ./scripts/sync-from-saves.sh --world
+else
+    log_info "Saving datapacks to repository..."
+    ./scripts/sync-from-saves.sh
+fi
+
+echo ""
+log_success "✅ Your work has been saved to the repository!"
+echo ""
+echo "Next steps:"
+echo "1. Review changes: git status"
+echo "2. Commit: git add . && git commit -m 'your message'"
 EOF
 
-    # Create a sync script that pulls from repo
+    # Script 2: Sync from repository 
     cat > "$scripts_dir/sync-from-repo.sh" << EOF
 #!/bin/bash
-# Sync changes from repository to saves
-# This script is auto-generated and knows the repo location
+# Get latest changes from repository to your development environment
+# Use --all to reset everything (datapacks + world)
 
 set -e
-
 REPO_PATH="$(pwd)"
-SAVES_PATH="$dev_world_path"
 
-# Colors for output
+# Colors for output  
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -223,78 +224,45 @@ NC='\033[0m' # No Color
 log_info() { echo -e "\${BLUE}[INFO]\${NC} \$1"; }
 log_success() { echo -e "\${GREEN}[SUCCESS]\${NC} \$1"; }
 log_warning() { echo -e "\${YELLOW}[WARNING]\${NC} \$1"; }
-log_error() { echo -e "\${RED}[ERROR]\${NC} \$1"; }
 
-echo -e "\${GREEN}Sync from Repository to Saves\${NC}"
-echo "=============================="
+echo -e "\${GREEN}🔄 Syncing from Repository\${NC}"
+echo "=========================="
 echo ""
 
-# Change to repo directory and run sync-to-saves
 cd "\$REPO_PATH"
-./scripts/sync-to-saves.sh "\$@"
 
-log_success "Sync complete! Repository changes applied to saves."
-EOF
-
-    # Create a build/validate script
-    cat > "$scripts_dir/validate-build.sh" << EOF
-#!/bin/bash
-# Validate and build from saves location
-# This script is auto-generated and knows the repo location
-
-set -e
-
-REPO_PATH="$(pwd)"
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-log_info() { echo -e "\${BLUE}[INFO]\${NC} \$1"; }
-log_success() { echo -e "\${GREEN}[SUCCESS]\${NC} \$1"; }
-
-echo -e "\${GREEN}Validate and Build\${NC}"
-echo "=================="
-echo ""
-
-# First sync changes to repo
-log_info "Syncing current changes to repository..."
-cd "\$REPO_PATH"
-./scripts/sync-from-saves.sh
-
-# Then validate
-log_info "Validating datapacks..."
-./scripts/build.sh --validate-only
-
-# Optionally run full build
-if [[ "\$1" == "--full-build" ]]; then
-    log_info "Running full build..."
-    ./scripts/build.sh
+# Get latest changes from repository
+if [[ "\$1" == "--all" ]]; then
+    log_info "Getting all changes from repository (datapacks + world)..."
+    ./scripts/sync-to-saves.sh --all
+else
+    log_info "Getting datapack changes from repository..."
+    ./scripts/sync-to-saves.sh
 fi
 
-log_success "Validation complete!"
+echo ""
+log_success "✅ Sync from repository complete!"
+echo ""
+echo "💡 Tip: Run '/reload' in Minecraft if you got datapack updates"
 EOF
 
     # Make scripts executable
     chmod +x "$scripts_dir"/*.sh
     
-    # Create a VS Code workspace file
+    # Create a simple VS Code workspace file  
     cat > "$dev_world_path/destroy-dev.code-workspace" << EOF
 {
     "folders": [
         {
-            "name": "Datapacks",
+            "name": "📦 Datapacks",
             "path": "./datapacks"
         },
         {
-            "name": "World Data",
+            "name": "🌍 World Data", 
             "path": "./data"
         },
         {
-            "name": "Dev Scripts",
+            "name": "⚡ Dev Scripts",
             "path": "./.dev-scripts"
         }
     ],
@@ -303,45 +271,18 @@ EOF
             "*.mcfunction": "mcfunction",
             "*.mcmeta": "json"
         },
-        "terminal.integrated.cwd": "\${workspaceFolder:Dev Scripts}"
+        "terminal.integrated.cwd": "\${workspaceFolder:⚡ Dev Scripts}",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.defaultProfile.osx": "bash",
+        "workbench.tree.indent": 20
     },
     "tasks": {
         "version": "2.0.0",
         "tasks": [
             {
-                "label": "Sync to Repository",
+                "label": "💾 Save Work to Repository",
                 "type": "shell",
-                "command": "./sync-to-repo.sh",
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared"
-                },
-                "options": {
-                    "cwd": "\${workspaceFolder:Dev Scripts}"
-                }
-            },
-            {
-                "label": "Sync from Repository",
-                "type": "shell",
-                "command": "./sync-from-repo.sh",
-                "group": "build",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "shared"
-                },
-                "options": {
-                    "cwd": "\${workspaceFolder:Dev Scripts}"
-                }
-            },
-            {
-                "label": "Validate Datapacks",
-                "type": "shell",
-                "command": "./validate-build.sh",
+                "command": "./save-to-repo.sh",
                 "group": {
                     "kind": "build",
                     "isDefault": true
@@ -350,25 +291,63 @@ EOF
                     "echo": true,
                     "reveal": "always",
                     "focus": false,
-                    "panel": "shared"
+                    "panel": "shared",
+                    "showReuseMessage": false,
+                    "clear": true
                 },
                 "options": {
-                    "cwd": "\${workspaceFolder:Dev Scripts}"
+                    "cwd": "\${workspaceFolder:⚡ Dev Scripts}"
                 }
             },
             {
-                "label": "Full Build Test",
-                "type": "shell",
-                "command": "./validate-build.sh --full-build",
+                "label": "💾 Save Work + World to Repository",
+                "type": "shell", 
+                "command": "./save-to-repo.sh --world",
                 "group": "build",
                 "presentation": {
                     "echo": true,
                     "reveal": "always",
                     "focus": false,
-                    "panel": "shared"
+                    "panel": "shared",
+                    "showReuseMessage": false,
+                    "clear": true
                 },
                 "options": {
-                    "cwd": "\${workspaceFolder:Dev Scripts}"
+                    "cwd": "\${workspaceFolder:⚡ Dev Scripts}"
+                }
+            },
+            {
+                "label": "🔄 Get Latest from Repository",
+                "type": "shell",
+                "command": "./sync-from-repo.sh",
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always", 
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": false,
+                    "clear": true
+                },
+                "options": {
+                    "cwd": "\${workspaceFolder:⚡ Dev Scripts}"
+                }
+            },
+            {
+                "label": "🔄 Reset Everything from Repository",
+                "type": "shell",
+                "command": "./sync-from-repo.sh --all",
+                "group": "build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared", 
+                    "showReuseMessage": false,
+                    "clear": true
+                },
+                "options": {
+                    "cwd": "\${workspaceFolder:⚡ Dev Scripts}"
                 }
             }
         ]
@@ -376,73 +355,62 @@ EOF
     "extensions": {
         "recommendations": [
             "SPGoding.datapack-language-server",
-            "arcensoth.language-mcfunction",
+            "arcensoth.language-mcfunction", 
             "Levertion.mcjson"
         ]
     }
 }
 EOF
 
-    # Create a README for the development environment
+    # Create a clean README for the development environment
     cat > "$dev_world_path/DEV-README.md" << EOF
 # 🎮 Destroy Development Environment
 
-This is your development world for the Destroy Minecraft map project.
-
-## 📁 Folder Structure
-
-- **datapacks/** - Edit datapacks here directly
-- **data/** - World data (usually don't edit directly)
-- **.dev-scripts/** - Development scripts for syncing with repository
-- **destroy-dev.code-workspace** - VS Code workspace file
+Welcome to your streamlined development setup! This folder contains everything you need to develop Minecraft datapacks efficiently.
 
 ## 🚀 Quick Start
 
-### Option 1: VS Code Workspace (Recommended)
+### VS Code (Recommended)
 1. Open **destroy-dev.code-workspace** in VS Code
-2. This gives you organized folders and built-in tasks
-3. Use Ctrl/Cmd+Shift+P → "Tasks: Run Task" to access sync commands
+2. Use **Ctrl/Cmd+Shift+P** → "Tasks: Run Task" to access development commands
+3. Edit datapacks in the **📦 Datapacks** folder
 
-### Option 2: Terminal Commands
-Navigate to the **.dev-scripts/** folder and run:
+### Terminal
+Navigate to **.dev-scripts/** folder and use:
+- **\`./save-to-repo.sh\`** - Save your work to repository  
+- **\`./sync-from-repo.sh\`** - Get latest changes from repository
 
-\`\`\`bash
-# Save your changes to the repository
-./sync-to-repo.sh
+## 🔄 Simple Workflow
 
-# Get latest changes from repository  
-./sync-from-repo.sh
+1. **📝 Edit** - Modify datapacks directly in the datapacks/ folder
+2. **🎮 Test** - Changes work immediately in Minecraft world "Destroy-dev"
+3. **💾 Save** - Run \`./save-to-repo.sh\` when ready to save work
+4. **📤 Commit** - Use git to commit your saved changes
 
-# Validate your changes
-./validate-build.sh
+## 💡 Available Scripts
 
-# Full build test
-./validate-build.sh --full-build
-\`\`\`
-
-## 🔄 Development Workflow
-
-1. **Edit datapacks** directly in the datapacks/ folder
-2. **Test in Minecraft** - changes are immediately available
-3. **Sync to repository** when ready to save your work
-4. **Validate** before committing to ensure everything works
+| Script | Purpose | When to Use |
+|--------|---------|-------------|
+| \`./save-to-repo.sh\` | Save datapacks to repository | After making changes you want to keep |
+| \`./save-to-repo.sh --world\` | Save datapacks + world | When you've modified world files too |
+| \`./sync-from-repo.sh\` | Get latest changes from repository | To update from repo |
+| \`./sync-from-repo.sh --all\` | Full reset from repository | To start fresh or fix issues |
 
 ## 💡 Pro Tips
 
-- Work directly in this folder - no need to edit repository files
-- Use the VS Code workspace for the best experience
-- Sync frequently to avoid losing work
-- Always validate before committing changes
+- **Work directly here** - No need to edit repository files
+- **Save frequently** - Run save-to-repo.sh often to avoid losing work  
+- **Use VS Code workspace** - Gets you organized folders and one-click commands
+- **Test immediately** - Changes are live in Minecraft instantly
 
 ## 📍 Repository Location
-
-Your repository is located at: $(pwd)
+$(pwd)
 
 ---
-*This development environment was created by setup-dev.sh*
+*Simple, elegant, and powerful development setup ✨*
 EOF
 
-    log_success "Development scripts and workspace configured"
+    log_success "Streamlined development environment configured"
 }
 
 # Save development configuration
@@ -503,10 +471,8 @@ show_next_steps() {
     echo "  Instructions:  $dev_world_path/DEV-README.md"
     echo ""
     echo -e "${BLUE}🛠️ Available Scripts (from .dev-scripts/ folder):${NC}"
-    echo "  ./sync-to-repo.sh              # Save changes to repository"
-    echo "  ./sync-from-repo.sh            # Get latest from repository"
-    echo "  ./validate-build.sh            # Validate your changes"
-    echo "  ./validate-build.sh --full-build  # Full build test"
+    echo "  ./save-to-repo.sh              # Save changes to repository"
+    echo "  ./sync-from-repo.sh             # Get latest changes from repository"
     echo ""
     echo -e "${GREEN}💡 Pro Tip:${NC} Open the VS Code workspace for the best development experience!"
     echo ""
