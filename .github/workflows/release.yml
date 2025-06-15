@@ -3,9 +3,15 @@ name: Release
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'datapacks/**'
+      - 'world-template/**'
   pull_request:
     branches: [ main ]
     types: [ closed ]
+    paths:
+      - 'datapacks/**'
+      - 'world-template/**'
 
 jobs:
   release:
@@ -21,52 +27,95 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Check if release needed
+      id: check_changes
+      run: |
+        # Check if we have changes in datapacks or world-template
+        if git diff --name-only HEAD~1 HEAD | grep -E '^(datapacks|world-template)/' > /dev/null; then
+          echo "needs_release=true" >> $GITHUB_OUTPUT
+          echo "Changes detected in datapacks or world-template"
+        else
+          echo "needs_release=false" >> $GITHUB_OUTPUT
+          echo "No changes in datapacks or world-template, skipping release"
+        fi
+
     - name: Setup Node.js
+      if: steps.check_changes.outputs.needs_release == 'true'
       uses: actions/setup-node@v4
       with:
         node-version: '18'
 
     - name: Install dependencies
+      if: steps.check_changes.outputs.needs_release == 'true'
       run: |
         sudo apt-get update
         sudo apt-get install -y zip unzip jq
 
     - name: Validate datapacks
+      if: steps.check_changes.outputs.needs_release == 'true'
       run: |
         echo "Validating datapack structure..."
         ./scripts/build.sh --validate-only
 
     - name: Build release package
+      if: steps.check_changes.outputs.needs_release == 'true'
       run: |
         echo "Building release package..."
         ./scripts/build.sh
 
-    - name: Generate version
+    - name: Generate version and changelog
+      if: steps.check_changes.outputs.needs_release == 'true'
       id: version
       run: |
-        # Extract version from commit messages or use timestamp
-        if git log -1 --pretty=%B | grep -q "BREAKING:"; then
+        # Extract version type from commit messages
+        if git log --since="$(git log -1 --format='%cd' --date=iso-strict HEAD~1)" --pretty=%B | grep -q "BREAKING:"; then
           echo "type=major" >> $GITHUB_OUTPUT
-        elif git log -1 --pretty=%B | grep -q "feat:"; then
+        elif git log --since="$(git log -1 --format='%cd' --date=iso-strict HEAD~1)" --pretty=%B | grep -q "feat:"; then
           echo "type=minor" >> $GITHUB_OUTPUT
         else
           echo "type=patch" >> $GITHUB_OUTPUT
         fi
+        
+        # Generate changelog from recent commits affecting datapacks/world-template
+        echo "changelog<<EOF" >> $GITHUB_OUTPUT
+        echo "## 🎮 What's New in This Release" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        
+        # Get commits that modified datapacks or world-template
+        git log --oneline --since="$(git log -1 --format='%cd' --date=iso-strict HEAD~5)" -- datapacks/ world-template/ | head -10 | while read line; do
+          echo "- $line" >> $GITHUB_OUTPUT
+        done
+        
+        echo "" >> $GITHUB_OUTPUT
+        echo "### 📦 Modified Components" >> $GITHUB_OUTPUT
+        
+        # Show what was changed
+        if git diff --name-only HEAD~1 HEAD | grep '^datapacks/' > /dev/null; then
+          echo "- 🔧 **Datapacks**: Game mechanics and functionality updates" >> $GITHUB_OUTPUT
+        fi
+        
+        if git diff --name-only HEAD~1 HEAD | grep '^world-template/' > /dev/null; then
+          echo "- 🌍 **World Template**: World structure and configuration changes" >> $GITHUB_OUTPUT
+        fi
+        
+        echo "EOF" >> $GITHUB_OUTPUT
 
     - name: Create release
-      if: success()
+      if: steps.check_changes.outputs.needs_release == 'true'
       run: |
         gh release create "v${{ github.run_number }}" \
-          --title "Destroy v${{ github.run_number }}" \
-          --notes "## What's Changed
-        ${{ github.event.head_commit.message }}
+          --title "🎮 Destroy v${{ github.run_number }}" \
+          --notes "${{ steps.version.outputs.changelog }}
         
-        ### Installation
+        ### 🚀 Installation
         1. Download the \`Destroy-v${{ github.run_number }}.zip\` file below
         2. Extract to your Minecraft saves folder
         3. Launch the world - everything is pre-configured!
         
-        **Full Changelog**: https://github.com/${{ github.repository }}/commits/main" \
+        ### 🔗 Links
+        - **Full Changelog**: https://github.com/${{ github.repository }}/commits/main
+        - **Development Guide**: https://github.com/${{ github.repository }}/blob/main/CONTRIBUTING.md
+        - **Report Issues**: https://github.com/${{ github.repository }}/issues/new" \
           ./build/Destroy-v${{ github.run_number }}.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

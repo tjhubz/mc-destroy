@@ -44,3 +44,5 @@ crash-reports/
 !icon.png
 
 .dev-config
+
+destroy-dev.code-workspace

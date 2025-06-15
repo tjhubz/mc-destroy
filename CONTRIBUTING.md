@@ -1,6 +1,6 @@
 # 🤝 Contributing to Destroy
 
-Thank you for your interest in contributing to Destroy! This guide will help you get started and ensure a smooth contribution process.
+Thank you for your interest in contributing to Destroy! This guide will help you get started with our streamlined development experience.
 
 ## 🚀 Quick Start for Contributors
 
@@ -11,61 +11,44 @@ Thank you for your interest in contributing to Destroy! This guide will help you
 git clone https://github.com/YOUR-USERNAME/mc-destroy.git
 cd mc-destroy
 
-# Set up development environment
+# Set up your unified development environment
 ./scripts/setup-dev.sh
 ```
 
-### 2. New Improved Development Process
+### 2. Unified Development Experience
 
-Our development workflow has been designed to make contributing as easy as possible. You work directly in your Minecraft saves folder using your favorite IDE, with all development tools available right where you need them.
+Our development workflow has been designed to be **elegantly simple**. You get a unified VS Code workspace that includes both your repository and your live Minecraft development environment.
 
 ```bash
 # Create a feature branch
 git checkout -b feature/your-feature-name
 
-# Open your development environment (VS Code workspace recommended)
-# The setup script will show you the exact path and workspace file
+# Open the unified workspace
+# The setup script will show you the exact workspace file to open
 
-# Make your changes directly in the saves folder using your IDE
-# Test immediately in Minecraft (world: "Destroy-dev")
-
-# When ready, save your changes back to the repository
-# (From your development environment's .dev-scripts/ folder)
-./save-to-repo.sh  # Save datapacks only
-# OR
-./save-to-repo.sh --world  # Save datapacks + world template
-
-# Get latest changes from repository if needed
-./sync-from-repo.sh
-
-# Commit your changes (back in repository folder)
-git add .
-git commit -m "feat: add new feature description"
-
-# Push and create PR
-git push origin feature/your-feature-name
+# Start developing immediately!
+# - Edit datapacks in the "📦 Live Datapacks" folder
+# - Changes apply instantly in Minecraft
+# - Use built-in tasks for easy sync and git operations
 ```
 
-### 3. Development Environment
+### 3. Streamlined Workflow
 
-After running `setup-dev.sh`, you get a complete development environment in your Minecraft saves folder:
+**🎯 The Complete Development Flow:**
 
-**🎯 Your Development Workspace:**
-- **VS Code Workspace**: `destroy-dev.code-workspace` with organized folders and tasks
-- **Datapacks Folder**: Edit datapacks directly here
-- **Development Scripts**: All sync tools available in `.dev-scripts/` folder
-- **Instructions**: `DEV-README.md` with complete guidance
+1. **📝 Edit** - Work directly in the Live Datapacks folder
+2. **� Test** - Changes are instantly live in Minecraft world "Destroy-dev"
+3. **💾 Save** - Use "Save Work to Repository" task (Ctrl/Cmd+Shift+P → Tasks)
+4. **📤 Review & Commit** - Use VS Code's git integration in the Repository folder
+5. **🚀 Push** - Create PR as usual
 
-**🔄 Available Commands (from your development environment):**
-```bash
-# Save your changes to repository
-./save-to-repo.sh                    # Save datapacks only (most common)
-./save-to-repo.sh --world            # Save datapacks + world template
-
-# Get latest changes from repository
-./sync-from-repo.sh                  # Get latest datapacks
-./sync-from-repo.sh --all            # Reset everything from repository
-```
+**🔄 Available Tasks (Ctrl/Cmd+Shift+P → Tasks):**
+- **💾 Save Work to Repository** - Save your datapacks (most common)
+- **💾 Save Work + World to Repository** - Save datapacks + world template
+- **🔄 Get Latest from Repository** - Pull latest changes
+- **🔄 Reset Everything from Repository** - Fresh start from repo
+- **🧪 Validate Build** - Test your changes
+- **📤 Create Commit** - Stage changes and see status
 
 ## 🎯 Types of Contributions
 
@@ -123,14 +106,12 @@ We welcome various types of contributions:
 ### Code Quality
 
 1. **Testing**: Always test changes thoroughly
-   - Work directly in the "Destroy-dev" world created by setup
+   - Work directly in the "Destroy-dev" world
    - Test edge cases and multiplayer scenarios
-   - Verify compatibility with existing datapacks
+   - Use `/reload` to refresh datapacks after changes
 
-2. **Validation**: Use our tools before committing
-   ```bash
-   ./scripts/build.sh --validate-only
-   ```
+2. **Validation**: Use the validation task before committing
+   - **Ctrl/Cmd+Shift+P** → "Tasks: Run Task" → "🧪 Validate Build"
 
 3. **Performance**: Consider performance impact
    - Avoid excessive command blocks
@@ -162,38 +143,34 @@ refactor(teleport): optimize teleportation logic
 
 ## 🧪 Testing Your Changes
 
-### Recommended Development Workflow
+### The Unified Development Experience
 
 1. **Setup Development Environment** (one time)
    ```bash
    ./scripts/setup-dev.sh
    ```
 
-2. **Open Your Development Workspace**
-   - **VS Code (Recommended)**: Open the `destroy-dev.code-workspace` file
-   - **Other IDEs**: Navigate to the development folder path shown by setup
+2. **Open Unified Workspace**
+   - Open the `destroy-dev.code-workspace` file in VS Code
+   - You'll see three organized folders:
+     - **📁 Repository**: Your git repo with all source code
+     - **🎮 Development World**: Your live Minecraft world
+     - **📦 Live Datapacks**: Edit these directly - changes are instant!
 
 3. **Develop and Test**
-   - Edit datapacks directly in your IDE (in the saves folder)
-   - Launch Minecraft and open the "Destroy-dev" world
-   - Test your changes immediately - no reloads needed!
+   - Edit datapacks in the "📦 Live Datapacks" folder
+   - Changes apply immediately in Minecraft
+   - Use `/reload` in-game to refresh if needed
+   - Test thoroughly in the "Destroy-dev" world
 
-4. **Save Changes to Repository**
-   ```bash
-   # From .dev-scripts/ folder or VS Code tasks
-   ./sync-to-repo.sh  # For datapack changes
-   ```
+4. **Save Your Work**
+   - **Ctrl/Cmd+Shift+P** → "Tasks: Run Task" → "💾 Save Work to Repository"
+   - Your changes are now staged in the Repository folder
 
-5. **Validate Build**
-   ```bash
-   ./validate-build.sh            # Quick validation
-   ./validate-build.sh --full-build  # Full build test
-   ```
-
-6. **Reset If Needed**
-   ```bash
-   ./sync-from-repo.sh --all  # Reset from repository
-   ```
+5. **Review and Commit**
+   - Switch to the Repository folder view
+   - Use VS Code's built-in git tools to review changes
+   - Commit using the git interface or terminal
 
 ### Testing Checklist
 
@@ -201,7 +178,7 @@ refactor(teleport): optimize teleportation logic
 - [ ] Changes work in multiplayer (if applicable)
 - [ ] No conflicts with existing datapacks
 - [ ] Performance is acceptable
-- [ ] Build validation passes
+- [ ] Build validation passes (use the validation task)
 - [ ] No console errors or warnings
 
 ## 📝 Pull Request Process
@@ -216,16 +193,13 @@ refactor(teleport): optimize teleportation logic
    git rebase main
    ```
 
-2. **Sync your final changes**
-   ```bash
-   ./scripts/sync-from-saves.sh  # Or --world if needed
-   ```
+2. **Save your final changes**
+   - Use the "💾 Save Work to Repository" task
+   - This ensures all your work is captured in the repository
 
-3. **Run final checks**
-   ```bash
-   ./scripts/build.sh --validate-only
-   ./scripts/build.sh
-   ```
+3. **Run final validation**
+   - Use the "🧪 Validate Build" task
+   - Fix any issues that arise
 
 4. **Clean commit history**
    - Squash related commits if needed
@@ -248,94 +222,44 @@ refactor(teleport): optimize teleportation logic
    - Any edge cases considered
    - Performance impact
 
-### PR Template
+### Smart Release System
 
-```markdown
-## Description
-Brief description of changes made.
+**🎯 Releases are automatically triggered only when you modify:**
+- `datapacks/` directory (game mechanics)
+- `world-template/` directory (world structure)
 
-## Type of Change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Documentation update
-- [ ] Refactoring
+**📝 Documentation, script, or other changes won't trigger releases** - keeping our release history clean and meaningful.
 
-## Testing
-- [ ] Tested in single-player
-- [ ] Tested in multiplayer
-- [ ] Build validation passes
-- [ ] No performance issues
+## 🎮 Development Environment Features
 
-## Screenshots/Videos
-If applicable, add screenshots or videos demonstrating the changes.
+### Unified Workspace Benefits
 
-## Additional Notes
-Any additional information that reviewers should know.
-```
+- **🎯 Single Location**: Everything you need in one VS Code workspace
+- **⚡ Instant Testing**: Edit datapacks and test immediately
+- **🔧 Integrated Tools**: All development tasks available via VS Code tasks
+- **📊 Git Integration**: Full git workflow within the workspace
+- **🔄 Smart Sync**: Easy sync between development and repository
 
-## 🎮 Development Environment
+### Available Tasks
 
-### Tools and Setup
+All development operations are available via **Ctrl/Cmd+Shift+P** → "Tasks: Run Task":
 
-1. **Required Tools**
-   - Git
-   - Bash shell (Linux/macOS/WSL on Windows)
-   - Minecraft Java Edition
-   - Text editor or IDE
+| Task | Purpose | When to Use |
+|------|---------|-------------|
+| 💾 Save Work to Repository | Save datapacks to repo | After making changes |
+| 💾 Save Work + World to Repository | Save datapacks + world | When world files changed |
+| 🔄 Get Latest from Repository | Pull latest changes | To sync with upstream |
+| 🔄 Reset Everything from Repository | Complete reset | To start fresh |
+| 🧪 Validate Build | Test your changes | Before committing |
+| 📤 Create Commit | Stage and view changes | Ready to commit |
 
-2. **Recommended Tools**
-   - VS Code with Minecraft function extensions
-   - NBT Explorer for world file editing
-   - Minecraft Development Kit (MDK) extensions
+### Pro Development Tips
 
-### Development Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `./scripts/setup-dev.sh` | Initial development setup |
-| `./scripts/sync-to-saves.sh` | Push repo changes to saves (legacy) |
-| `./scripts/sync-from-saves.sh` | Pull saves changes to repo (legacy) |
-| `./scripts/build.sh` | Build and validate project |
-
-**New Scripts (in your development environment's `.dev-scripts/` folder):**
-
-| Script | Purpose |
-|--------|---------|
-| `./save-to-repo.sh` | Save changes from development environment to repository |
-| `./sync-from-repo.sh` | Get latest changes from repository |
-
-### Helpful Commands
-
-**From your development environment (`.dev-scripts/` folder):**
-```bash
-# Essential development workflow commands
-./save-to-repo.sh                       # Save your work to repository
-./sync-from-repo.sh                     # Get latest changes from repository
-
-# Full workflow options
-./save-to-repo.sh --world               # Save datapacks + world template
-./sync-from-repo.sh --all               # Complete reset from repository
-```
-
-**From repository folder (legacy commands still work):**
-```bash
-./scripts/sync-from-saves.sh            # Save work to repo
-./scripts/sync-to-saves.sh --all        # Reset from repo
-./scripts/build.sh --validate-only      # Check validity (if needed)
-git status                              # Check git status
-```
-
-## 🏷️ Release Process
-
-Releases are automated when PRs are merged:
-
-1. **PR Merged** → Triggers GitHub Actions
-2. **Validation** → Datapacks are validated
-3. **Build** → Complete minigame package is built
-4. **Release** → New GitHub release is created
-5. **Assets** → Downloadable zip is attached
-
-Version numbers are automatically determined by commit messages.
+- **Work in Live Datapacks**: Changes are instantly available in Minecraft
+- **Use Tasks**: Faster than remembering script commands
+- **Git in Repository**: All git operations work in the Repository folder
+- **Save Frequently**: Use the save task often to avoid losing work
+- **Test Immediately**: No need to run sync scripts - just start Minecraft
 
 ## ❓ Getting Help
 
@@ -374,3 +298,15 @@ Please be respectful and constructive in all interactions. We're all here to mak
 ---
 
 **Ready to contribute?** Run `./scripts/setup-dev.sh` and start building amazing Minecraft content with us! 🎮✨
+
+### 🚀 Quick Start Summary
+
+1. **Fork & Clone** the repository
+2. **Run** `./scripts/setup-dev.sh`
+3. **Open** `destroy-dev.code-workspace` in VS Code
+4. **Edit** datapacks in the Live Datapacks folder
+5. **Test** immediately in Minecraft
+6. **Save** work using VS Code tasks
+7. **Commit & Push** using VS Code git integration
+
+*Simple, elegant, and powerful development experience!*

@@ -55,17 +55,103 @@ check_prerequisites() {
     log_success "Prerequisites check passed"
 }
 
+# Detect operating system
+detect_os() {
+    # Check for Windows first using multiple methods
+    if [[ -n "$WINDIR" ]] || [[ -n "$windir" ]] || [[ "$OS" == "Windows_NT" ]]; then
+        OS_TYPE="windows"
+    else
+        case "$(uname -s)" in
+            CYGWIN*|MINGW*|MSYS*)
+                OS_TYPE="windows"
+                ;;
+            Darwin*)
+                OS_TYPE="macos"
+                ;;
+            Linux*)
+                OS_TYPE="linux"
+                ;;
+            *)
+                # Try to detect Windows through other means
+                if command -v cmd.exe >/dev/null 2>&1; then
+                    OS_TYPE="windows"
+                else
+                    OS_TYPE="unknown"
+                fi
+                ;;
+        esac
+    fi
+}
+
+# Convert path to VS Code workspace format
+convert_path_for_vscode() {
+    local input_path="$1"
+    
+    case "$OS_TYPE" in
+        "windows")
+            # Convert Windows paths for VS Code workspace
+            # Handle multiple Windows path formats
+            if [[ "$input_path" =~ ^/[a-zA-Z]/ ]]; then
+                # Git Bash style path: /c/Users/... -> C:/Users/...
+                echo "$input_path" | sed 's|^/\([a-zA-Z]\)/|\1:/|'
+            elif [[ "$input_path" =~ ^[a-zA-Z]:\\ ]]; then
+                # Windows style path with backslashes: C:\Users\... -> C:/Users/...
+                echo "$input_path" | sed 's|\\|/|g'
+            elif [[ "$input_path" =~ ^[a-zA-Z]:/ ]]; then
+                # Already in correct Windows format: C:/Users/...
+                echo "$input_path"
+            else
+                # Try to handle other formats or relative paths
+                # Convert backslashes to forward slashes
+                echo "$input_path" | sed 's|\\|/|g'
+            fi
+            ;;
+        *)
+            # Unix-like systems (macOS, Linux) - use path as-is
+            echo "$input_path"
+            ;;
+    esac
+}
+
 # Detect Minecraft installation
 detect_minecraft() {
     log_info "Detecting Minecraft installation..."
 
-    # Common Minecraft directories
-    local possible_paths=(
-        "$HOME/.minecraft/saves"
-        "$HOME/Library/Application Support/minecraft/saves"  # macOS
-        "$HOME/AppData/Roaming/.minecraft/saves"            # Windows (WSL/Git Bash)
-        "/c/Users/$USER/AppData/Roaming/.minecraft/saves"   # Windows (Git Bash alt)
-    )
+    # Detect OS first
+    detect_os
+    log_info "Detected OS: $OS_TYPE"
+
+    # Common Minecraft directories based on OS
+    local possible_paths=()
+    
+    case "$OS_TYPE" in
+        "windows")
+            possible_paths=(
+                "$HOME/AppData/Roaming/.minecraft/saves"
+                "/c/Users/$USER/AppData/Roaming/.minecraft/saves"
+                "$USERPROFILE/AppData/Roaming/.minecraft/saves"
+            )
+            ;;
+        "macos")
+            possible_paths=(
+                "$HOME/Library/Application Support/minecraft/saves"
+                "$HOME/.minecraft/saves"
+            )
+            ;;
+        "linux")
+            possible_paths=(
+                "$HOME/.minecraft/saves"
+            )
+            ;;
+        *)
+            possible_paths=(
+                "$HOME/.minecraft/saves"
+                "$HOME/Library/Application Support/minecraft/saves"
+                "$HOME/AppData/Roaming/.minecraft/saves"
+                "/c/Users/$USER/AppData/Roaming/.minecraft/saves"
+            )
+            ;;
+    esac
 
     for path in "${possible_paths[@]}"; do
         if [ -d "$path" ]; then
@@ -132,7 +218,7 @@ EOF
     log_success "Development world created: $dev_world_path"
 }
 
-# Setup git hooks (optional)
+# Setup git hooks
 setup_git_hooks() {
     log_info "Setting up git hooks..."
 
@@ -150,120 +236,36 @@ EOF
     log_success "Git hooks configured"
 }
 
-# Create development scripts and copy to saves folder
-create_dev_scripts() {
+# Create unified development workspace
+create_unified_workspace() {
     local dev_world_path="$MINECRAFT_SAVES_DIR/$DEV_WORLD_NAME"
-    local scripts_dir="$dev_world_path/.dev-scripts"
+    local repo_path="$(pwd)"
     
-    log_info "Setting up development scripts in saves folder..."
+    log_info "Creating unified development workspace..."
     
-    # Create scripts directory in the development world
-    mkdir -p "$scripts_dir"
+    # Convert paths to VS Code workspace format
+    local vscode_dev_world_path=$(convert_path_for_vscode "$dev_world_path")
+    local vscode_datapacks_path=$(convert_path_for_vscode "$dev_world_path/datapacks")
     
-    # Create the only two scripts developers actually need
-    # Script 1: Save work to repository
-    cat > "$scripts_dir/save-to-repo.sh" << EOF
-#!/bin/bash
-# Save your development work back to the repository
-# This syncs datapacks from your development world to the git repository
-
-set -e
-REPO_PATH="$(pwd)"
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-log_info() { echo -e "\${BLUE}[INFO]\${NC} \$1"; }
-log_success() { echo -e "\${GREEN}[SUCCESS]\${NC} \$1"; }
-log_warning() { echo -e "\${YELLOW}[WARNING]\${NC} \$1"; }
-
-echo -e "\${GREEN}💾 Saving Your Work to Repository\${NC}"
-echo "=================================="
-echo ""
-
-# Change to repo directory and run sync-from-saves
-cd "\$REPO_PATH"
-
-# Determine what to sync based on arguments
-if [[ "\$1" == "--world" ]]; then
-    log_info "Saving datapacks + world template to repository..."
-    ./scripts/sync-from-saves.sh --world
-else
-    log_info "Saving datapacks to repository..."
-    ./scripts/sync-from-saves.sh
-fi
-
-echo ""
-log_success "✅ Your work has been saved to the repository!"
-echo ""
-echo "Next steps:"
-echo "1. Review changes: git status"
-echo "2. Commit: git add . && git commit -m 'your message'"
-EOF
-
-    # Script 2: Sync from repository 
-    cat > "$scripts_dir/sync-from-repo.sh" << EOF
-#!/bin/bash
-# Get latest changes from repository to your development environment
-# Use --all to reset everything (datapacks + world)
-
-set -e
-REPO_PATH="$(pwd)"
-
-# Colors for output  
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-log_info() { echo -e "\${BLUE}[INFO]\${NC} \$1"; }
-log_success() { echo -e "\${GREEN}[SUCCESS]\${NC} \$1"; }
-log_warning() { echo -e "\${YELLOW}[WARNING]\${NC} \$1"; }
-
-echo -e "\${GREEN}🔄 Syncing from Repository\${NC}"
-echo "=========================="
-echo ""
-
-cd "\$REPO_PATH"
-
-# Get latest changes from repository
-if [[ "\$1" == "--all" ]]; then
-    log_info "Getting all changes from repository (datapacks + world)..."
-    ./scripts/sync-to-saves.sh --all
-else
-    log_info "Getting datapack changes from repository..."
-    ./scripts/sync-to-saves.sh
-fi
-
-echo ""
-log_success "✅ Sync from repository complete!"
-echo ""
-echo "💡 Tip: Run '/reload' in Minecraft if you got datapack updates"
-EOF
-
-    # Make scripts executable
-    chmod +x "$scripts_dir"/*.sh
+    log_info "VS Code workspace paths:"
+    log_info "  Development World: $vscode_dev_world_path"
+    log_info "  Live Datapacks: $vscode_datapacks_path"
     
-    # Create a simple VS Code workspace file  
-    cat > "$dev_world_path/destroy-dev.code-workspace" << EOF
+    # Create the unified VS Code workspace in the repository root
+    cat > "destroy-dev.code-workspace" << EOF
 {
     "folders": [
         {
-            "name": "📦 Datapacks",
-            "path": "./datapacks"
+            "name": "📁 Repository",
+            "path": "."
         },
         {
-            "name": "🌍 World Data", 
-            "path": "./data"
+            "name": "🎮 Development World",
+            "path": "$vscode_dev_world_path"
         },
         {
-            "name": "⚡ Dev Scripts",
-            "path": "./.dev-scripts"
+            "name": "📦 Live Datapacks",
+            "path": "$vscode_datapacks_path"
         }
     ],
     "settings": {
@@ -271,10 +273,22 @@ EOF
             "*.mcfunction": "mcfunction",
             "*.mcmeta": "json"
         },
-        "terminal.integrated.cwd": "\${workspaceFolder:⚡ Dev Scripts}",
+        "files.exclude": {
+            "**/.git": false
+        },
+        "git.enabled": true,
+        "git.path": "git",
+        "terminal.integrated.cwd": "\${workspaceFolder:📁 Repository}",
         "terminal.integrated.defaultProfile.linux": "bash",
         "terminal.integrated.defaultProfile.osx": "bash",
-        "workbench.tree.indent": 20
+        "terminal.integrated.defaultProfile.windows": "Git Bash",
+        "workbench.tree.indent": 20,
+        "explorer.compactFolders": false,
+        "workbench.colorTheme": "Default Dark+",
+        "workbench.iconTheme": "vs-seti",
+        "editor.minimap.enabled": true,
+        "editor.bracketPairColorization.enabled": true,
+        "editor.guides.bracketPairs": true
     },
     "tasks": {
         "version": "2.0.0",
@@ -282,11 +296,12 @@ EOF
             {
                 "label": "💾 Save Work to Repository",
                 "type": "shell",
-                "command": "./save-to-repo.sh",
+                "command": "./scripts/sync-from-saves.sh",
                 "group": {
                     "kind": "build",
                     "isDefault": true
                 },
+                "detail": "Sync your datapack changes from Minecraft saves back to the repository",
                 "presentation": {
                     "echo": true,
                     "reveal": "always",
@@ -296,14 +311,15 @@ EOF
                     "clear": true
                 },
                 "options": {
-                    "cwd": "\${workspaceFolder:⚡ Dev Scripts}"
+                    "cwd": "\${workspaceFolder:📁 Repository}"
                 }
             },
             {
                 "label": "💾 Save Work + World to Repository",
-                "type": "shell", 
-                "command": "./save-to-repo.sh --world",
+                "type": "shell",
+                "command": "./scripts/sync-from-saves.sh --world",
                 "group": "build",
+                "detail": "Sync both datapacks and world template changes to the repository",
                 "presentation": {
                     "echo": true,
                     "reveal": "always",
@@ -313,41 +329,79 @@ EOF
                     "clear": true
                 },
                 "options": {
-                    "cwd": "\${workspaceFolder:⚡ Dev Scripts}"
+                    "cwd": "\${workspaceFolder:📁 Repository}"
                 }
             },
             {
                 "label": "🔄 Get Latest from Repository",
                 "type": "shell",
-                "command": "./sync-from-repo.sh",
+                "command": "./scripts/sync-to-saves.sh",
                 "group": "build",
+                "detail": "Pull latest datapack changes from repository to your Minecraft world",
                 "presentation": {
                     "echo": true,
-                    "reveal": "always", 
+                    "reveal": "always",
                     "focus": false,
                     "panel": "shared",
                     "showReuseMessage": false,
                     "clear": true
                 },
                 "options": {
-                    "cwd": "\${workspaceFolder:⚡ Dev Scripts}"
+                    "cwd": "\${workspaceFolder:📁 Repository}"
                 }
             },
             {
                 "label": "🔄 Reset Everything from Repository",
                 "type": "shell",
-                "command": "./sync-from-repo.sh --all",
+                "command": "./scripts/sync-to-saves.sh --all",
                 "group": "build",
+                "detail": "Reset your development world to match the repository exactly (fresh start)",
                 "presentation": {
                     "echo": true,
                     "reveal": "always",
                     "focus": false,
-                    "panel": "shared", 
+                    "panel": "shared",
                     "showReuseMessage": false,
                     "clear": true
                 },
                 "options": {
-                    "cwd": "\${workspaceFolder:⚡ Dev Scripts}"
+                    "cwd": "\${workspaceFolder:📁 Repository}"
+                }
+            },
+            {
+                "label": "🧪 Validate Build",
+                "type": "shell",
+                "command": "./scripts/build.sh --validate-only",
+                "group": "test",
+                "detail": "Test and validate your datapack changes without creating a build",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": false,
+                    "clear": true
+                },
+                "options": {
+                    "cwd": "\${workspaceFolder:📁 Repository}"
+                }
+            },
+            {
+                "label": "📤 Create Commit",
+                "type": "shell",
+                "command": "git add . && git status",
+                "group": "build",
+                "detail": "Stage all changes and show git status to prepare for commit",
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": false,
+                    "clear": true
+                },
+                "options": {
+                    "cwd": "\${workspaceFolder:📁 Repository}"
                 }
             }
         ]
@@ -355,62 +409,63 @@ EOF
     "extensions": {
         "recommendations": [
             "SPGoding.datapack-language-server",
-            "arcensoth.language-mcfunction", 
-            "Levertion.mcjson"
+            "arcensoth.language-mcfunction",
+            "Levertion.mcjson",
+            "GitLens.gitlens"
         ]
     }
 }
 EOF
 
-    # Create a clean README for the development environment
+    # Create a development README in the saves folder for quick reference
     cat > "$dev_world_path/DEV-README.md" << EOF
 # 🎮 Destroy Development Environment
 
-Welcome to your streamlined development setup! This folder contains everything you need to develop Minecraft datapacks efficiently.
+> ✨ **Welcome to your unified development workspace!** ✨  
+> This setup gives you the best of both worlds: instant testing and seamless git workflow.
 
-## 🚀 Quick Start
+## 🏗️ Your Workspace Structure
 
-### VS Code (Recommended)
-1. Open **destroy-dev.code-workspace** in VS Code
-2. Use **Ctrl/Cmd+Shift+P** → "Tasks: Run Task" to access development commands
-3. Edit datapacks in the **📦 Datapacks** folder
-
-### Terminal
-Navigate to **.dev-scripts/** folder and use:
-- **\`./save-to-repo.sh\`** - Save your work to repository  
-- **\`./sync-from-repo.sh\`** - Get latest changes from repository
+- **📁 Repository**: Source code, git history, scripts
+- **🎮 Development World**: Your live Minecraft world
+- **📦 Live Datapacks**: Edit these directly - changes are instant!
 
 ## 🔄 Simple Workflow
 
-1. **📝 Edit** - Modify datapacks directly in the datapacks/ folder
-2. **🎮 Test** - Changes work immediately in Minecraft world "Destroy-dev"
-3. **💾 Save** - Run \`./save-to-repo.sh\` when ready to save work
-4. **📤 Commit** - Use git to commit your saved changes
+### 1. Edit Datapacks
+- Work in the **📦 Live Datapacks** folder
+- Changes apply immediately in Minecraft
+- Use \`/reload\` in-game to refresh datapacks
 
-## 💡 Available Scripts
+### 2. Save Your Work
+- **Ctrl/Cmd+Shift+P** → "Tasks: Run Task" → "💾 Save Work to Repository"
+- Or run: \`./scripts/sync-from-saves.sh\` from the repository folder
 
-| Script | Purpose | When to Use |
-|--------|---------|-------------|
-| \`./save-to-repo.sh\` | Save datapacks to repository | After making changes you want to keep |
-| \`./save-to-repo.sh --world\` | Save datapacks + world | When you've modified world files too |
-| \`./sync-from-repo.sh\` | Get latest changes from repository | To update from repo |
-| \`./sync-from-repo.sh --all\` | Full reset from repository | To start fresh or fix issues |
+### 3. Review & Commit
+- Check changes in the **📁 Repository** folder
+- Use VS Code's integrated git tools
+- Or run: \`git status\`, \`git add .\`, \`git commit -m "message"\`
 
-## 💡 Pro Tips
+## 💡 Available Tasks (Ctrl/Cmd+Shift+P → Tasks)
 
-- **Work directly here** - No need to edit repository files
-- **Save frequently** - Run save-to-repo.sh often to avoid losing work  
-- **Use VS Code workspace** - Gets you organized folders and one-click commands
-- **Test immediately** - Changes are live in Minecraft instantly
+- **💾 Save Work to Repository** - Save datapacks (most common)
+- **💾 Save Work + World to Repository** - Save datapacks + world template
+- **🔄 Get Latest from Repository** - Pull latest changes
+- **🔄 Reset Everything from Repository** - Fresh start
+- **🧪 Validate Build** - Test your changes
+- **📤 Create Commit** - Stage changes and see status
 
-## 📍 Repository Location
-$(pwd)
+## 📍 Key Locations
+
+- **Repository**: $(pwd)
+- **Development World**: $dev_world_path
+- **Live Datapacks**: $dev_world_path/datapacks
 
 ---
-*Simple, elegant, and powerful development setup ✨*
+*Elegant, simple, powerful development experience ✨*
 EOF
 
-    log_success "Streamlined development environment configured"
+    log_success "Unified development workspace created"
 }
 
 # Save development configuration
@@ -419,14 +474,18 @@ save_dev_config() {
     
     log_info "Saving development configuration..."
     
+    # Convert paths for cross-platform compatibility
+    local converted_minecraft_saves_dir=$(convert_path_for_vscode "$MINECRAFT_SAVES_DIR")
+    local converted_dev_world_path=$(convert_path_for_vscode "$dev_world_path")
+    
     cat > "$DEV_CONFIG_FILE" << EOF
 # Destroy Development Configuration
 # This file is generated by setup-dev.sh and used by sync scripts
 # Do not edit manually
 
 DEV_WORLD_NAME="$DEV_WORLD_NAME"
-MINECRAFT_SAVES_DIR="$MINECRAFT_SAVES_DIR"
-DEV_WORLD_PATH="$dev_world_path"
+MINECRAFT_SAVES_DIR="$converted_minecraft_saves_dir"
+DEV_WORLD_PATH="$converted_dev_world_path"
 WORLD_TEMPLATE="$WORLD_TEMPLATE"
 DATAPACKS_DIR="$DATAPACKS_DIR"
 SETUP_DATE="$(date)"
@@ -438,49 +497,53 @@ EOF
 # Show next steps
 show_next_steps() {
     local dev_world_path="$MINECRAFT_SAVES_DIR/$DEV_WORLD_NAME"
+    local repo_path="$(pwd)"
     
     echo ""
-    log_success "Development environment setup complete!"
+    echo "════════════════════════════════════════════════════════════════"
+    log_success "🎉 Unified Development Environment Setup Complete!"
+    echo "════════════════════════════════════════════════════════════════"
     echo ""
-    echo -e "${GREEN}🎯 Your Development Workspace:${NC}"
-    echo -e "${BLUE}$dev_world_path${NC}"
+    echo -e "${GREEN}🚀 Getting Started:${NC}"
     echo ""
-    echo -e "${GREEN}🚀 Getting Started (Choose One):${NC}"
+    echo -e "${YELLOW}1. Open VS Code Workspace:${NC}"
+    echo "   • Open VS Code"
+    echo "   • File → Open Workspace from File"
+    echo "   • Select: ${BLUE}$repo_path/destroy-dev.code-workspace${NC}"
     echo ""
-    echo -e "${YELLOW}Option 1: VS Code Workspace (Recommended)${NC}"
-    echo "1. Open VS Code"
-    echo "2. File → Open Workspace from File"
-    echo "3. Navigate to: $dev_world_path/destroy-dev.code-workspace"
-    echo "4. Use Ctrl/Cmd+Shift+P → 'Tasks: Run Task' for sync commands"
-    echo ""
-    echo -e "${YELLOW}Option 2: Terminal/IDE of Choice${NC}"
-    echo "1. Open your IDE and navigate to: $dev_world_path"
-    echo "2. Edit datapacks in the datapacks/ folder"
-    echo "3. Use scripts in .dev-scripts/ folder for syncing"
+    echo -e "${YELLOW}2. Start Developing:${NC}"
+    echo "   • Edit datapacks in the '📦 Live Datapacks' folder"
+    echo "   • Test immediately in Minecraft (world: '$DEV_WORLD_NAME')"
+    echo "   • Use tasks (Ctrl/Cmd+Shift+P → Tasks) for easy sync"
     echo ""
     echo -e "${GREEN}🔄 Development Workflow:${NC}"
-    echo "1. Edit datapacks directly in the saves folder"
-    echo "2. Test immediately in Minecraft (world: $DEV_WORLD_NAME)"
-    echo "3. Run sync scripts to save work back to repository"
-    echo "4. Validate and commit when ready"
+    echo "1. 📝 Edit datapacks → Changes are live instantly"
+    echo "2. 🎮 Test in Minecraft → Use '/reload' to refresh"
+    echo "3. 💾 Save work → Run 'Save Work to Repository' task"
+    echo "4. 📤 Review & commit → Use VS Code's git integration"
     echo ""
-    echo -e "${BLUE}📁 Key Locations:${NC}"
-    echo "  Datapacks:     $dev_world_path/datapacks/"
-    echo "  Dev Scripts:   $dev_world_path/.dev-scripts/"
-    echo "  VS Code File:  $dev_world_path/destroy-dev.code-workspace"
-    echo "  Instructions:  $dev_world_path/DEV-README.md"
+    echo -e "${BLUE}✨ Key Features:${NC}"
+    echo "• Work directly in saves folder (instant testing)"
+    echo "• Unified workspace (no folder switching)"
+    echo "• One-click sync tasks"
+    echo "• Integrated git workflow"
+    echo "• Smart release detection"
     echo ""
-    echo -e "${BLUE}🛠️ Available Scripts (from .dev-scripts/ folder):${NC}"
-    echo "  ./save-to-repo.sh              # Save changes to repository"
-    echo "  ./sync-from-repo.sh             # Get latest changes from repository"
+    echo -e "${GREEN}💡 Pro Tips:${NC}"
+    echo "• The workspace shows both repo and saves folders"
+    echo "• Use tasks instead of manual script running"
+    echo "• Git operations work from the Repository folder"
+    echo "• Check DEV-README.md in your development world for quick reference"
     echo ""
-    echo -e "${GREEN}💡 Pro Tip:${NC} Open the VS Code workspace for the best development experience!"
+    echo "════════════════════════════════════════════════════════════════"
+    echo -e "${GREEN}✨ Happy coding! Your development environment is ready! ✨${NC}"
+    echo "════════════════════════════════════════════════════════════════"
     echo ""
 }
 
 # Main execution
 main() {
-    echo -e "${GREEN}Destroy Development Environment Setup${NC}"
+    echo -e "${GREEN}🎮 Destroy Unified Development Setup${NC}"
     echo "========================================"
     echo ""
 
@@ -488,7 +551,7 @@ main() {
     detect_minecraft
     create_dev_world
     setup_git_hooks
-    create_dev_scripts
+    create_unified_workspace
     save_dev_config
     show_next_steps
 }
