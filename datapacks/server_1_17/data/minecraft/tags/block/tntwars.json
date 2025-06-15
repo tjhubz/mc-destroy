@@ -1,0 +1,17 @@
+{
+    "replace": false,
+    "values": [
+        "minecraft:stone_bricks",
+        "minecraft:honey_block",
+        "minecraft:slime_block",
+        "minecraft:sponge",
+        "minecraft:sticky_piston",
+        "minecraft:piston",
+        "minecraft:observer",
+        "minecraft:stone_brick_slab",
+        "minecraft:redstone_block",
+        "minecraft:dispenser",
+        "minecraft:oak_fence",
+        "minecraft:tnt"
+    ]
+}

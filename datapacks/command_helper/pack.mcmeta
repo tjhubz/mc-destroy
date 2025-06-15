@@ -1,0 +1,6 @@
+{
+    "pack": {
+        "pack_format": 71,
+        "description": "Adds functions which are useful for emulating old command behavior."
+    }
+}
