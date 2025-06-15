@@ -15,31 +15,60 @@ cd mc-destroy
 ./scripts/setup-dev.sh
 ```
 
-### 2. Development Process
+### 2. New Improved Development Process
+
+Our development workflow has been designed to make contributing as easy as possible. You work directly in your Minecraft saves folder using your favorite IDE, with all development tools available right where you need them.
 
 ```bash
 # Create a feature branch
 git checkout -b feature/your-feature-name
 
-# Make changes to datapacks
-# Edit files in the datapacks/ directory
+# Open your development environment (VS Code workspace recommended)
+# The setup script will show you the exact path and workspace file
 
-# Test your changes
-./scripts/reload-datapacks.sh  # Updates dev world
-# Play test in Minecraft
+# Make your changes directly in the saves folder using your IDE
+# Test immediately in Minecraft (world: "Destroy-dev")
 
-# Validate before committing
-./scripts/build.sh --validate-only
+# When ready, save your changes back to the repository
+# (From your development environment's .dev-scripts/ folder)
+./sync-to-repo.sh  # Sync datapacks only
+# OR
+./sync-to-repo.sh --world  # Sync datapacks + world template
 
-# Test full build
-./scripts/build.sh
+# Validate your changes
+./validate-build.sh
 
-# Commit your changes
-git add datapacks/
+# Commit your changes (back in repository folder)
+git add .
 git commit -m "feat: add new feature description"
 
 # Push and create PR
 git push origin feature/your-feature-name
+```
+
+### 3. Development Environment
+
+After running `setup-dev.sh`, you get a complete development environment in your Minecraft saves folder:
+
+**🎯 Your Development Workspace:**
+- **VS Code Workspace**: `destroy-dev.code-workspace` with organized folders and tasks
+- **Datapacks Folder**: Edit datapacks directly here
+- **Development Scripts**: All sync tools available in `.dev-scripts/` folder
+- **Instructions**: `DEV-README.md` with complete guidance
+
+**🔄 Available Commands (from your development environment):**
+```bash
+# Save your changes to repository
+./sync-to-repo.sh              # Save datapacks only (most common)
+./sync-to-repo.sh --world      # Save datapacks + world template
+
+# Get latest changes from repository
+./sync-from-repo.sh            # Get datapacks only
+./sync-from-repo.sh --all      # Get everything
+
+# Validate and build
+./validate-build.sh            # Validate your changes
+./validate-build.sh --full-build  # Full build test
 ```
 
 ## 🎯 Types of Contributions
@@ -98,7 +127,7 @@ We welcome various types of contributions:
 ### Code Quality
 
 1. **Testing**: Always test changes thoroughly
-   - Use the development world created by `setup-dev.sh`
+   - Work directly in the "Destroy-dev" world created by setup
    - Test edge cases and multiplayer scenarios
    - Verify compatibility with existing datapacks
 
@@ -137,29 +166,37 @@ refactor(teleport): optimize teleportation logic
 
 ## 🧪 Testing Your Changes
 
-### Local Testing
+### Recommended Development Workflow
 
-1. **Setup Development World**
+1. **Setup Development Environment** (one time)
    ```bash
    ./scripts/setup-dev.sh
    ```
 
-2. **Make Changes** to datapacks in `datapacks/` directory
+2. **Open Your Development Workspace**
+   - **VS Code (Recommended)**: Open the `destroy-dev.code-workspace` file
+   - **Other IDEs**: Navigate to the development folder path shown by setup
 
-3. **Reload Datapacks**
+3. **Develop and Test**
+   - Edit datapacks directly in your IDE (in the saves folder)
+   - Launch Minecraft and open the "Destroy-dev" world
+   - Test your changes immediately - no reloads needed!
+
+4. **Save Changes to Repository**
    ```bash
-   ./scripts/reload-datapacks.sh
+   # From .dev-scripts/ folder or VS Code tasks
+   ./sync-to-repo.sh  # For datapack changes
    ```
-
-4. **Test in Minecraft**
-   - Launch Minecraft
-   - Open the "mc-destroy-dev" world
-   - Test your changes thoroughly
 
 5. **Validate Build**
    ```bash
-   ./scripts/build.sh --validate-only
-   ./scripts/build.sh  # Full build test
+   ./validate-build.sh            # Quick validation
+   ./validate-build.sh --full-build  # Full build test
+   ```
+
+6. **Reset If Needed**
+   ```bash
+   ./sync-from-repo.sh --all  # Reset from repository
    ```
 
 ### Testing Checklist
@@ -183,13 +220,18 @@ refactor(teleport): optimize teleportation logic
    git rebase main
    ```
 
-2. **Run final checks**
+2. **Sync your final changes**
+   ```bash
+   ./scripts/sync-from-saves.sh  # Or --world if needed
+   ```
+
+3. **Run final checks**
    ```bash
    ./scripts/build.sh --validate-only
    ./scripts/build.sh
    ```
 
-3. **Clean commit history**
+4. **Clean commit history**
    - Squash related commits if needed
    - Use clear commit messages
 
@@ -255,26 +297,40 @@ Any additional information that reviewers should know.
 | Script | Purpose |
 |--------|---------|
 | `./scripts/setup-dev.sh` | Initial development setup |
+| `./scripts/sync-to-saves.sh` | Push repo changes to saves (legacy) |
+| `./scripts/sync-from-saves.sh` | Pull saves changes to repo (legacy) |
 | `./scripts/build.sh` | Build and validate project |
-| `./scripts/reload-datapacks.sh` | Hot reload datapacks |
+
+**New Scripts (in your development environment's `.dev-scripts/` folder):**
+
+| Script | Purpose |
+|--------|---------|
+| `./sync-to-repo.sh` | Save changes from saves to repository |
+| `./sync-from-repo.sh` | Get latest changes from repository to saves |
+| `./validate-build.sh` | Validate and optionally build your changes |
 
 ### Helpful Commands
 
+**From your development environment (`.dev-scripts/` folder):**
 ```bash
-# Quick validation
-./scripts/build.sh --validate-only
+# Most common workflow commands
+./sync-to-repo.sh                       # Save your work to repo
+./sync-from-repo.sh                     # Get latest from repo
+./validate-build.sh                     # Check datapack validity
+
+# Full reset workflow
+./sync-from-repo.sh --all               # Complete reset from repo
 
 # Full build test
-./scripts/build.sh
+./validate-build.sh --full-build        # Test full build process
+```
 
-# Reload datapacks in dev world
-./scripts/reload-datapacks.sh
-
-# Check git status
-git status
-
-# View build output
-ls -la build/
+**From repository folder (legacy commands still work):**
+```bash
+./scripts/sync-from-saves.sh            # Save work to repo
+./scripts/sync-to-saves.sh --all        # Reset from repo
+./scripts/build.sh --validate-only      # Check validity
+git status                              # Check git status
 ```
 
 ## 🏷️ Release Process
