@@ -44,10 +44,10 @@ execute as @e[type=minecraft:item,nbt={Item:{id:"minecraft:oak_planks"}}] at @s 
 execute as @e[type=minecraft:item,nbt={Item:{id:"minecraft:stick"}}] at @s run kill @s
 
 #effects
-effect give @a[tag=!exit] minecraft:saturation 1000000 255 true
+effect give @a[tag=!exit] minecraft:saturation infinite 255 true
 effect give @a[gamemode=adventure,team=main] minecraft:weakness 1 255 true
 effect give @a[gamemode=adventure,tag=queue] minecraft:weakness 1 255 true
-effect give @a minecraft:night_vision 1000000 255 true
+effect give @a minecraft:night_vision infinite 255 true
 
 # New player
 execute as @a[tag=!notNew] at @s run function main:server/new_player

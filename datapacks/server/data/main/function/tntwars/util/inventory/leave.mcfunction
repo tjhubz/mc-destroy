@@ -2,6 +2,7 @@ tag @s remove editing
 clear @s
 scoreboard players reset @s carrotClick
 tp @s ~-2 ~ ~
+playsound minecraft:entity.enderman.teleport master @s ~ ~100 ~ 255 1.4
 
 item replace entity @s enderchest.0 with minecraft:air
 item replace entity @s enderchest.1 with minecraft:air

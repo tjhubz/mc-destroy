@@ -1,6 +1,6 @@
 
 #execute as @a at @s run playsound minecraft:block.note_block.bit master @s ~ ~100 ~ 1000 2
-execute as @a run tellraw @s [{text:"[DESTROY] ",color:"light_purple",type:"text"},{text:"Game code reloaded!",color:"gray",type:"text"}]
+execute as @a run tellraw @s [{text:"[DESTROY] ",color:"light_purple",type:"text"},{text:"Datapacks reloaded!",color:"gray",type:"text"}]
 
 team add yellow
 team add white

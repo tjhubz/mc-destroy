@@ -1,7 +1,7 @@
 scoreboard players add @s[scores={tutorial_stage=1..}] tutorial 1
 kill @e[type=minecraft:item,dx=30,dy=100,dz=30,nbt={Item:{id:"minecraft:warped_fungus_on_a_stick"}}]
 kill @e[type=minecraft:item,dx=30,dy=100,dz=30,nbt={Item:{id:"minecraft:lead"}}]
-effect give @a[dx=30,dy=100,dz=30,team=tutorial] minecraft:resistance 1000000 255 true
+effect give @a[dx=30,dy=100,dz=30,team=tutorial] minecraft:resistance infinite 255 true
 execute as @a[gamemode=spectator,distance=..50,tag=!settings,team=!tutorial] at @s run tp @s 0 10 0
 forceload add ~ ~ ~30 ~30
 
