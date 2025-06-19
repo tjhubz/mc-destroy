@@ -276,6 +276,14 @@ create_unified_workspace() {
         "files.exclude": {
             "**/.git": false
         },
+        "search.exclude": {
+            "📁 Repository/**": true,
+            "🎮 Development World/**": true,
+            "📦 Live Datapacks/**": false
+        },
+        "search.useGlobalSearchStringsSetting": true,
+        "search.smartCase": true,
+        "search.collapseResults": "auto",
         "git.enabled": true,
         "git.path": "git",
         "terminal.integrated.cwd": "\${workspaceFolder:📁 Repository}",
