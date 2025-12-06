@@ -27,6 +27,8 @@ team modify tutorial color green
 team modify tutorial collisionRule never
 team modify tutorial nametagVisibility hideForOwnTeam
 
+scoreboard objectives add look_up_exit dummy
+
 forceload add -550 -549
 #execute unless entity @a run scoreboard players set *map settings 1
 #execute unless entity @a run function main:tntwars/map/map1

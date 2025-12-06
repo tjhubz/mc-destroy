@@ -5,6 +5,9 @@ effect give @a[dx=30,dy=100,dz=30,team=tutorial] minecraft:resistance infinite 2
 execute as @a[gamemode=spectator,distance=..50,tag=!settings,team=!tutorial] at @s run tp @s 0 10 0
 forceload add ~ ~ ~30 ~30
 
+# Look up to exit tutorial detection
+execute as @a[dx=30,dy=100,dz=30,team=tutorial] at @s run function main:server/tutorial/look_up_exit
+
 execute if entity @s[scores={tutorial_stage=1}] at @s run function main:server/tutorial/stage/1
 execute if entity @s[scores={tutorial_stage=2}] at @s run function main:server/tutorial/stage/2
 execute if entity @s[scores={tutorial_stage=3}] at @s run function main:server/tutorial/stage/3
