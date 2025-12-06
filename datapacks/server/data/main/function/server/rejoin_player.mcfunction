@@ -31,6 +31,7 @@ scoreboard players reset @s shotTrident
 scoreboard players reset @s rejoin
 scoreboard players reset @s loadingTimer
 scoreboard players reset @s cinematic
+scoreboard players reset @s look_up_exit
 
 tellraw @s[scores={cool=1}] [{text:"\nWelcome back! It looks like you played a previous version of Destroy. As a token of appreciation, you will have a special hat in game.",color:"green",type:"text"}]
 scoreboard players set @s[scores={cool=1}] cool 2

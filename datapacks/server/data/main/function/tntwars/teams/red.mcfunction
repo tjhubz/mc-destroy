@@ -18,7 +18,7 @@ tag @s add tntwars
 tag @s add alive
 gamemode survival @s
 tp @s @e[type=minecraft:armor_stand,tag=redSpawn,limit=1]
-execute at @e[type=minecraft:armor_stand,tag=redSpawn,limit=1] run spawnpoint @s ~ ~ ~ ~
+execute at @e[type=minecraft:armor_stand,tag=redSpawn,limit=1] run spawnpoint @s ~ ~ ~ ~ ~
 function main:tntwars/util/get_items
 
 return 1
