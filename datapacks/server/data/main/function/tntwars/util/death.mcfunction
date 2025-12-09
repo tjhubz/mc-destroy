@@ -25,4 +25,7 @@ execute if entity @s[tag=alive,team=yellow] if score @s death = *respawn_time_t 
 execute if entity @s[tag=alive,team=white] if score @s death = *respawn_time_t settings run gamemode survival @s[gamemode=!survival]
 execute if entity @s[tag=alive,team=white] if score @s death = *respawn_time_t settings run tp @s @e[type=minecraft:armor_stand,tag=whiteSpawn,tag=active,limit=1]
 
+#reapply pvp style attack speed after respawn
+execute if entity @s[tag=alive] if score @s death = *respawn_time_t settings run function main:tntwars/settings/pvp_style/apply
+
 return 1

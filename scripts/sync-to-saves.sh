@@ -66,13 +66,17 @@ sync_datapacks_to_saves() {
     # Ensure datapacks directory exists in saves
     mkdir -p "$DEV_WORLD_PATH/datapacks"
 
-    # Remove existing datapacks in saves
+    # Remove existing directory datapacks in saves (preserve .zip files)
     if [ -d "$DEV_WORLD_PATH/datapacks" ]; then
-        rm -rf "${DEV_WORLD_PATH}/datapacks"/*
-        log_info "Cleared existing datapacks from saves"
+        for item in "$DEV_WORLD_PATH/datapacks"/*; do
+            if [ -d "$item" ]; then
+                rm -rf "$item"
+            fi
+        done
+        log_info "Cleared existing directory datapacks from saves"
     fi
 
-    # Copy datapacks from repo to saves
+    # Copy datapacks from repo to saves (directories only, skip .zip files)
     local pack_count=0
     if [ -d "$DATAPACKS_DIR" ]; then
         for item in "$DATAPACKS_DIR"/*; do
@@ -80,11 +84,6 @@ sync_datapacks_to_saves() {
                 # Copy directory datapacks
                 cp -r "$item" "$DEV_WORLD_PATH/datapacks/"
                 log_info "Synced datapack directory: $(basename "$item")"
-                pack_count=$((pack_count + 1))
-            elif [ -f "$item" ] && [[ "$item" == *.zip ]]; then
-                # Copy zip datapacks
-                cp "$item" "$DEV_WORLD_PATH/datapacks/"
-                log_info "Synced datapack zip: $(basename "$item")"
                 pack_count=$((pack_count + 1))
             fi
         done

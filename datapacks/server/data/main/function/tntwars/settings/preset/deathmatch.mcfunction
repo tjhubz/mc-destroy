@@ -10,6 +10,7 @@ scoreboard players set *sheep_glow settings 0
 scoreboard players set *fall_damage settings 0
 scoreboard players set *respawn_time settings 0
 scoreboard players set *alert settings 0
+scoreboard players set *time_of_day settings 0
 
 execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-1 ~-2 run function main:tntwars/settings/crossing
 execute at @e[type=minecraft:marker,tag=preset] positioned ~ ~-1 ~-4 run function main:tntwars/settings/launching

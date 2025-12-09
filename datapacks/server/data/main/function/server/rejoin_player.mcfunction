@@ -2,6 +2,9 @@ scoreboard players add @s rejoin 0
 gamemode adventure @s[gamemode=!adventure]
 clear @s
 
+#reset attack speed to vanilla
+attribute @s minecraft:attack_speed base reset
+
 title @s title [{text:" ",type:"text"}]
 title @s subtitle [{text:" ",type:"text"}]
 

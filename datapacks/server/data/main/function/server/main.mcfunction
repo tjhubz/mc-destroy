@@ -44,7 +44,9 @@ execute as @e[type=minecraft:item,nbt={Item:{id:"minecraft:oak_planks"}}] at @s 
 execute as @e[type=minecraft:item,nbt={Item:{id:"minecraft:stick"}}] at @s run kill @s
 
 #effects
-effect give @a[tag=!exit] minecraft:saturation infinite 255 true
+scoreboard players add *saturation_timer global 1
+execute if score *saturation_timer global matches 120 run effect give @a[tag=!exit] minecraft:saturation 1 0 true
+execute if score *saturation_timer global matches 120.. run scoreboard players set *saturation_timer global 0
 effect give @a[gamemode=adventure,team=main] minecraft:weakness 1 255 true
 effect give @a[gamemode=adventure,tag=queue] minecraft:weakness 1 255 true
 effect give @a minecraft:night_vision infinite 255 true
