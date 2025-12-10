@@ -52,7 +52,7 @@ execute if entity @s[tag=!editing,name=Dextur] at @s run item replace entity @s 
 execute if score *weapon_preset settings matches 0 at @s run item replace entity @s[tag=!editing] hotbar.0 with minecraft:iron_sword[minecraft:unbreakable={},minecraft:tooltip_display={hidden_components:["minecraft:attribute_modifiers","minecraft:unbreakable"]}] 1
 #Deadly weapon - netherite sword + sharpness
 execute if score *weapon_preset settings matches 1 at @s run item replace entity @s[tag=!editing] hotbar.0 with minecraft:netherite_sword[minecraft:enchantments={"minecraft:sharpness":3},minecraft:enchantment_glint_override=1b,minecraft:unbreakable={},minecraft:tooltip_display={hidden_components:["minecraft:enchantments","minecraft:attribute_modifiers","minecraft:unbreakable"]}] 1
-#Displacement weapon - wooden sword + knockback
+#Knockback weapon - wooden sword + knockback
 execute if score *weapon_preset settings matches 2 at @s run item replace entity @s[tag=!editing] hotbar.0 with minecraft:wooden_sword[minecraft:enchantments={"minecraft:knockback":2},minecraft:enchantment_glint_override=1b,minecraft:unbreakable={},minecraft:tooltip_display={hidden_components:["minecraft:enchantments","minecraft:attribute_modifiers","minecraft:unbreakable"]}] 1
 #THE MACE - wind burst + density
 execute if score *weapon_preset settings matches 3 at @s run item replace entity @s[tag=!editing] hotbar.0 with minecraft:mace[minecraft:enchantments={"minecraft:wind_burst":3,"minecraft:density":5},minecraft:enchantment_glint_override=1b,minecraft:unbreakable={},minecraft:tooltip_display={hidden_components:["minecraft:enchantments","minecraft:attribute_modifiers","minecraft:unbreakable"]}] 1

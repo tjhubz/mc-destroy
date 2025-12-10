@@ -4,7 +4,8 @@
       "Bash(grep:*)",
       "Bash(find:*)",
       "WebSearch",
-      "WebFetch(domain:minecraft.fandom.com)"
+      "WebFetch(domain:minecraft.fandom.com)",
+      "WebFetch(domain:www.minecraft.net)"
     ],
     "deny": [],
     "ask": []

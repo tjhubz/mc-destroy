@@ -1,7 +1,11 @@
 {
     "pack": {
-        "description": "stuff things",
-        "pack_format": 71
+    "description": "hello",
+    "min_format": [
+      94,
+      1
+    ],
+    "max_format": 94
     },
     "filter": {
       "block": [

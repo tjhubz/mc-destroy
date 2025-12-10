@@ -10,7 +10,7 @@ execute if score *armor_preset settings matches 2 at @e[tag=settings_loadout] ru
 #weapon preset sign at ~ ~ ~1 from settings_loadout marker
 execute if score *weapon_preset settings matches 0 at @e[tag=settings_loadout] run setblock ~ ~ ~1 minecraft:crimson_wall_sign[facing=east]{front_text:{messages:['',{text:"WEAPON",color:"gold",bold:1b,click_event:{action:"run_command",command:"/function main:tntwars/settings/weapon_preset"},type:"text"},{text:"Standard",color:"gray",italic:1b,type:"text"},'']}} replace
 execute if score *weapon_preset settings matches 1 at @e[tag=settings_loadout] run setblock ~ ~ ~1 minecraft:crimson_wall_sign[facing=east]{front_text:{messages:['',{text:"WEAPON",color:"gold",bold:1b,click_event:{action:"run_command",command:"/function main:tntwars/settings/weapon_preset"},type:"text"},{text:"Deadly",color:"gray",italic:1b,type:"text"},'']}} replace
-execute if score *weapon_preset settings matches 2 at @e[tag=settings_loadout] run setblock ~ ~ ~1 minecraft:crimson_wall_sign[facing=east]{front_text:{messages:['',{text:"WEAPON",color:"gold",bold:1b,click_event:{action:"run_command",command:"/function main:tntwars/settings/weapon_preset"},type:"text"},{text:"Displacement",color:"gray",italic:1b,type:"text"},'']}} replace
+execute if score *weapon_preset settings matches 2 at @e[tag=settings_loadout] run setblock ~ ~ ~1 minecraft:crimson_wall_sign[facing=east]{front_text:{messages:['',{text:"WEAPON",color:"gold",bold:1b,click_event:{action:"run_command",command:"/function main:tntwars/settings/weapon_preset"},type:"text"},{text:"Knockback",color:"gray",italic:1b,type:"text"},'']}} replace
 execute if score *weapon_preset settings matches 3 at @e[tag=settings_loadout] run setblock ~ ~ ~1 minecraft:crimson_wall_sign[facing=east]{front_text:{messages:['',{text:"WEAPON",color:"gold",bold:1b,click_event:{action:"run_command",command:"/function main:tntwars/settings/weapon_preset"},type:"text"},{text:"THE MACE",color:"gray",italic:1b,type:"text"},'']}} replace
 
 #armor stand preview - helmet (always white leather for preview)
@@ -37,7 +37,7 @@ execute if score *weapon_preset settings matches 0 run item replace entity @e[ta
 #armor stand preview - weapon preset 1 (Deadly): netherite sword with sharpness
 execute if score *weapon_preset settings matches 1 run item replace entity @e[tag=settings_loadout,type=armor_stand] weapon.mainhand with minecraft:netherite_sword[minecraft:enchantments={"minecraft:sharpness":3},minecraft:enchantment_glint_override=1b] 1
 
-#armor stand preview - weapon preset 2 (Displacement): wooden sword with knockback
+#armor stand preview - weapon preset 2 (Knockback): wooden sword with knockback
 execute if score *weapon_preset settings matches 2 run item replace entity @e[tag=settings_loadout,type=armor_stand] weapon.mainhand with minecraft:wooden_sword[minecraft:enchantments={"minecraft:knockback":3},minecraft:enchantment_glint_override=1b] 1
 
 #armor stand preview - weapon preset 3 (THE MACE): mace with wind burst and density
