@@ -35,4 +35,12 @@ forceload add -550 -549
 #execute unless entity @a run function main:tntwars/settings/classic
 #execute unless entity @a run function main:tntwars/map/practice_reset
 
+gamerule minecraft:immediate_respawn true
+gamerule minecraft:mob_drops false
+gamerule minecraft:entity_drops false
+gamerule minecraft:keep_inventory true
+gamerule minecraft:send_command_feedback false
+gamerule minecraft:block_drops false
+gamerule minecraft:command_block_output false
+
 return 1
