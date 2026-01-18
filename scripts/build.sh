@@ -109,6 +109,37 @@ build_package() {
     log_info "Creating temporary world copy..."
     cp -r "$WORLD_TEMPLATE" "$TEMP_DIR"
 
+    # Remove empty .mca files (these cause Atlas validation errors)
+    log_info "Removing empty .mca files..."
+    local empty_count=0
+    while IFS= read -r -d '' mca_file; do
+        if [ ! -s "$mca_file" ]; then
+            rm "$mca_file"
+            log_info "Removed empty file: $mca_file"
+            empty_count=$((empty_count + 1))
+        fi
+    done < <(find "$TEMP_DIR" -name "*.mca" -print0 2>/dev/null)
+    if [ $empty_count -gt 0 ]; then
+        log_info "Removed $empty_count empty .mca files"
+    fi
+
+    # Remove POI folder (regenerates on world load, causes Atlas errors)
+    if [ -d "$TEMP_DIR/poi" ]; then
+        rm -rf "$TEMP_DIR/poi"
+        log_info "Removed POI folder"
+    fi
+
+    # Remove generated folder (structures should be in datapacks instead)
+    if [ -d "$TEMP_DIR/generated" ]; then
+        log_warning "Found 'generated' folder - structures should be moved to datapacks"
+        rm -rf "$TEMP_DIR/generated"
+        log_info "Removed generated folder"
+    fi
+
+    # Remove empty directories
+    log_info "Removing empty directories..."
+    find "$TEMP_DIR" -type d -empty -delete 2>/dev/null || true
+
     # Ensure datapacks directory exists in temp world
     mkdir -p "$TEMP_DIR/datapacks"
 
